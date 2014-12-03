@@ -1,0 +1,30 @@
+# CLASS GAME
+# contains CLASS BOARD
+#	VARIABLES
+#	root cell (0,0)
+# 	contains class CELLS
+#		VARIABLES
+#		enum terrain in {"(p)lain", "(d)esert", "(s)wamp", "(m)ountain", "(a)lpine", "city small (cs)", "city med (cm)", "city large (sl)"}
+#		occupied_by 0 (unoccupied), 1, 2, 3, 4, etc.
+#		x, y
+#		link to ne, e, se, sw, w, nw
+#		string city_name
+#		contains PATH ne, e, se, sw, w, nw
+#		FUNCTIONS
+#		create_cell
+#		contains class PATH
+#			cost (int)
+#			built_by 0 (unbuilt), 1, 2, 3, 4, etc.
+#			adjacent_path (pointer to path in another cell)
+#	FUNCTIONS
+#	create_board(height, width): creates a board with null cells of specified height and width
+#	cell_coord: returns cell at given coordinate
+#	display_board: displays the board
+
+class Game(object):
+	def __init__(self):
+		game_board = Board()
+
+	class Board(object):
+		def __init__(self):
+			
