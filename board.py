@@ -1,6 +1,18 @@
-import pygame as pg, operator as op, cell as c, math, time, random
-import cProfile
+import pygame as pg, operator as op, cell as c, math, time, random, heapq
 from globals import *
+
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+
+    def empty(self):
+        return len(self.elements) == 0
+
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+
+    def get(self):
+        return heapq.heappop(self.elements)[1]
 
 class Game(object):
     def corner(self, i, j):  # Returns the coordinate for the upper left hand corner of a hex image
@@ -86,9 +98,9 @@ class Game(object):
         self.screen = pg.display.set_mode([self.screen_width, self.screen_height])
         self.refresh_display()
 
-    def create_path(self, node_list):
+    def create_path(self, node_list, player_num):
         for i in range(1, len(node_list)):
-            self.create_rail(node_list[i - 1], node_list[i], 1)
+            self.create_rail(node_list[i - 1], node_list[i], player_num)
 
     def tracks_at(self,loc):
         if loc[0] % 2 == 0:
@@ -159,59 +171,99 @@ class Game(object):
         dest_cube = self.conv_to_cube(dest)
         return sum(map(abs,map(op.sub, src_cube, dest_cube)))/2
 
-    ##### Dijkstra search code shamelessly ripped from http://geekly-yours.blogspot.com/
-
-    def dijkstra(self, src, dest, player_num, visited=[], distances={}, predecessors={}):
-        if src == dest:
-            # We build the shortest path and display it
-            path = []
-            pred = dest
-            while pred is not None:
-                path.append(pred)
-                pred = predecessors.get(pred)
-            return path, distances[dest]
+    def heuristic(self,goal,current,next,player_num):
+        if self.cost(current,next,player_num) == 0:
+            heur_cost = 0
         else:
-            # if it is the initial  run, initializes the cost
-            if not visited:
-                distances[src] = 0
-            # visit the neighbors
-            for neighbor in self.adj_list(src):  ######
-                if neighbor not in visited:
-                    new_distance = distances[src] + self.cost(src, neighbor, player_num)+self.hex_distance(src,dest)
-                    if new_distance < distances.get(neighbor, float('inf')):
-                        distances[neighbor] = new_distance
-                        predecessors[neighbor] = src
-            # mark as visited
-            visited.append(src)
-            # now that all neighbors have been visited: recurse
-            # select the non visited node with lowest distance 'x'
-            # run Dijskstra with src='x'
-            unvisited = {}
-            for k in [(i, j) for i in range(self.height) for j in range(self.width)]:
-                if k not in visited:
-                    unvisited[k] = distances.get(k, float('inf'))
-            x = min(unvisited, key=unvisited.get)
-            return self.dijkstra(x, dest, player_num, visited, distances, predecessors)
+            heur_cost = self.hex_distance(next,goal)*.25
+        return heur_cost
 
+    ### A star algorithm shamelessly ripped from http://www.redblobgames.com/pathfinding/a-star/implementation.html
+    def a_star(self, start, goal, player_num):
+        frontier = PriorityQueue()
+        frontier.put(start,0)
+        came_from = {}
+        cost_so_far = {}
+        came_from[start] = None
+        cost_so_far[start] = 0
+
+        while not frontier.empty():
+            current = frontier.get()
+            if current == goal:
+                break
+
+            for next in self.adj_list(current):
+                new_cost = cost_so_far[current] + self.cost(current, next, player_num)
+                if new_cost < cost_so_far.get(next, inf):
+                    cost_so_far[next] = new_cost
+                    priority = new_cost + self.heuristic(goal,current,next,player_num)
+                    frontier.put(next, priority)
+                    came_from[next] = current
+
+        return came_from, cost_so_far
+
+    def reconstruct_path(self, came_from, start, goal):
+        current = goal
+        path = [current]
+        while current != start:
+            current = came_from[current]
+            path.append(current)
+        return path
+
+    #  ##### Old djikstra implementation using recursion. Much slower (by 2x) than while loop implementation
+    #  ##### Dijkstra search code shamelessly ripped from http://geekly-yours.blogspot.com/
+    # def dijkstra(self, src, dest, player_num, visited=[], distances={}, predecessors={}, act_dist = {}):
+    #     if src == dest:
+    #         # Build shortest path
+    #         path = []
+    #         pred = dest
+    #         while pred is not None:
+    #             path.append(pred)
+    #             pred = predecessors.get(pred)
+    #         return path, distances[dest], act_dist[dest]
+    #     else:
+    #         # if it is the initial  run, initializes the cost
+    #         if not visited:
+    #             distances[src] = 0
+    #             act_dist[src] = 0
+    #         # visit the neighbors
+    #         for neighbor in self.adj_list(src):
+    #             if neighbor not in visited:
+    #                 new_dist_act = act_dist[src] + self.cost(src, neighbor, player_num)
+    #                 new_distance = distances[src]+ self.cost(src, neighbor, player_num)#+self.heuristic(dest,src,neighbor,player_num)
+    #                 if new_distance < distances.get(neighbor, inf):
+    #                     distances[neighbor] = new_distance
+    #                     act_dist[neighbor] = new_dist_act
+    #                     predecessors[neighbor] = src
+    #         # mark as visited
+    #         visited.append(src)
+    #         # now that all neighbors have been visited: recurse
+    #         # select the non visited node with lowest distance 'x'
+    #         # run Dijskstra with src='x'
+    #         unvisited = {}
+    #         for k in [(i, j) for i in range(self.height) for j in range(self.width)]:
+    #             if k not in visited:
+    #                 unvisited[k] = distances.get(k, inf)
+    #         x = min(unvisited, key=unvisited.get)
+    #         return self.dijkstra(x, dest, player_num, visited, distances, predecessors, act_dist)
+
+start_time = time.time()
 g = Game()
 
 cities = g.hex_names.keys()
 random.shuffle(cities)
-
+#city_names = ["Baker", "Abbot", "Dawson", "Camino", "Emmen"]
+#cities = [g.inv_names[city] for city in city_names]
 total_cost = 0
+
+#a star test string
 for i in range(len(cities)-1):
-   pathtest, cost = g.dijkstra(cities[i], cities[i+1], 1, [], {}, {})
-   g.create_path(pathtest)
-   print g.hex_names[cities[i]], g.hex_names[cities[i+1]], cost
-   total_cost += cost
+    came_from, cost_so_far = g.a_star(cities[i],cities[i+1],1)
+    cost = cost_so_far[cities[i+1]]
+    pathtest = g.reconstruct_path(came_from, start = cities[i], goal= cities[i+1])
+    g.create_path(pathtest,1)
+    print g.hex_names[cities[i]], g.hex_names[cities[i+1]]
+    total_cost += cost
 print total_cost
-
-
-# This chooses a slightly longer path...
-# Emmen Camino 23
-# Emmen Baker 15
-# Emmen Dawson 7
-# Emmen Abbot 9
-
-
+print time.time()-start_time
 input("Press Enter to continue...")

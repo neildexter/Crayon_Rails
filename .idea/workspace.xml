@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6e79654e-a3a7-4eac-b9b6-f3dddd526fe9" name="Default" comment="Fixed path finding; permutes cities and serially finds the best routes to connect ea">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source_dest_list.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/board.py" afterPath="$PROJECT_DIR$/board.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cell.py" afterPath="$PROJECT_DIR$/cell.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Crayon_Rails.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,13 +28,17 @@
       <file leaf-file-name="board.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/board.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="183" column="11" selection-start="7610" selection-end="7610" vertical-scroll-proportion="0.48267326" vertical-offset="2070" max-vertical-offset="2865">
+            <state line="243" column="45" selection-start="9960" selection-end="9960" vertical-scroll-proportion="0.8465473" vertical-offset="2279" max-vertical-offset="3075">
               <folding>
-                <element signature="e#0#66#0" expanded="true" />
-                <element signature="e#536#727#0" expanded="false" />
-                <element signature="e#1862#2485#0" expanded="false" />
-                <element signature="e#2573#2872#0" expanded="false" />
-                <element signature="e#3744#3842#0" expanded="false" />
+                <element signature="e#0#73#0" expanded="true" />
+                <element signature="e#518#783#0" expanded="false" />
+                <element signature="e#1121#2027#0" expanded="false" />
+                <element signature="e#2146#2769#0" expanded="false" />
+                <element signature="e#2857#3156#0" expanded="false" />
+                <element signature="e#3227#3433#0" expanded="false" />
+                <element signature="e#3512#3980#0" expanded="false" />
+                <element signature="e#4040#4147#0" expanded="false" />
+                <element signature="e#4186#4348#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -55,7 +56,7 @@
       <file leaf-file-name="cell.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cell.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="133" column="29" selection-start="4754" selection-end="4754" vertical-scroll-proportion="0.0" vertical-offset="1546" max-vertical-offset="2010">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2010">
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
                 <element signature="e#250#541#0" expanded="false" />
@@ -159,6 +160,7 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="SearchEverywhereHistory" value="" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -403,7 +405,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="9" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -416,7 +418,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cell.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="133" column="29" selection-start="4754" selection-end="4754" vertical-scroll-proportion="0.0" vertical-offset="1546" max-vertical-offset="2010">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2010">
           <folding>
             <element signature="e#0#21#0" expanded="true" />
             <element signature="e#250#541#0" expanded="false" />
@@ -431,15 +433,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1147" column="13" selection-start="47764" selection-end="47764" vertical-scroll-proportion="0.28985506" vertical-offset="16130" max-vertical-offset="22185">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/board.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="183" column="11" selection-start="7610" selection-end="7610" vertical-scroll-proportion="0.48267326" vertical-offset="2070" max-vertical-offset="2865">
+        <state line="243" column="45" selection-start="9960" selection-end="9960" vertical-scroll-proportion="0.8465473" vertical-offset="2279" max-vertical-offset="3075">
           <folding>
-            <element signature="e#0#66#0" expanded="true" />
-            <element signature="e#536#727#0" expanded="false" />
-            <element signature="e#1862#2485#0" expanded="false" />
-            <element signature="e#2573#2872#0" expanded="false" />
-            <element signature="e#3744#3842#0" expanded="false" />
+            <element signature="e#0#73#0" expanded="true" />
+            <element signature="e#518#783#0" expanded="false" />
+            <element signature="e#1121#2027#0" expanded="false" />
+            <element signature="e#2146#2769#0" expanded="false" />
+            <element signature="e#2857#3156#0" expanded="false" />
+            <element signature="e#3227#3433#0" expanded="false" />
+            <element signature="e#3512#3980#0" expanded="false" />
+            <element signature="e#4040#4147#0" expanded="false" />
+            <element signature="e#4186#4348#0" expanded="false" />
           </folding>
         </state>
       </provider>
