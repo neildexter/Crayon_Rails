@@ -1,4 +1,5 @@
 import pygame as pg, operator as op, cell as c, math, time, random
+import cProfile
 from globals import *
 
 class Game(object):
@@ -33,6 +34,8 @@ class Game(object):
             if occupied_by == 0:
                 cost = terr_cost[self.board[b[0]][b[1]].terrain]
             elif occupied_by == player_num:
+                # Could set cost to small number to reduce unnecessary travel when building paths
+                # (or larger for saving turns (.6?))
                 cost = 0 # "free" to rebuild over owned track
             else:
                 cost = inf # can't build over other player's tracks
@@ -65,21 +68,6 @@ class Game(object):
 
         valid_adj = [item for item in all_adj if self.valid(item)]
         return valid_adj
-
-    # Displays the cost for the hexes surrounding a given location
-    # def test_cost(self):
-    #     test_path = [(5, 28), (6, 28), (6, 27), (6, 26), (6, 25), (6, 24), (6, 23), (6, 22), (5, 21), (4, 21), (4, 20),
-    #                  (3, 19), (3, 18), (3, 17), (4, 17), (4, 16)]
-    #     for node in test_path:
-    #         for i in range(self.width):
-    #             for j in range(self.height):
-    #                 size = h / 3
-    #                 if self.cost(node, (i, j)) < 100:
-    #                     cost_str = str(self.cost(node, (i, j)))
-    #                     letter = pg.font.Font(None, size)
-    #                     pic = letter.render(cost_str, 1, green, color_key)
-    #                     pic.set_colorkey(color_key)
-    #                     self.board[i][j].hex_image.blit(pic, (h / 2, h / 2))
 
     def refresh_display(self):  # Redraws the entire display
         self.screen.fill(white)
@@ -158,6 +146,19 @@ class Game(object):
                        for j in range(self.width)] for i in range(self.height)]
         self.create_display()
 
+    def conv_to_cube(self,coord):
+        col = coord[1]
+        row = coord[0]
+        x = col - (row - (row % 2)) / 2
+        z = row
+        y = -x-z
+        return (x,y,z)
+
+    def hex_distance(self,src,dest):
+        src_cube = self.conv_to_cube(src)
+        dest_cube = self.conv_to_cube(dest)
+        return sum(map(abs,map(op.sub, src_cube, dest_cube)))/2
+
     ##### Dijkstra search code shamelessly ripped from http://geekly-yours.blogspot.com/
 
     def dijkstra(self, src, dest, player_num, visited=[], distances={}, predecessors={}):
@@ -176,7 +177,7 @@ class Game(object):
             # visit the neighbors
             for neighbor in self.adj_list(src):  ######
                 if neighbor not in visited:
-                    new_distance = distances[src] + self.cost(src, neighbor, player_num)
+                    new_distance = distances[src] + self.cost(src, neighbor, player_num)+self.hex_distance(src,dest)
                     if new_distance < distances.get(neighbor, float('inf')):
                         distances[neighbor] = new_distance
                         predecessors[neighbor] = src
@@ -192,19 +193,25 @@ class Game(object):
             x = min(unvisited, key=unvisited.get)
             return self.dijkstra(x, dest, player_num, visited, distances, predecessors)
 
-
 g = Game()
 
 cities = g.hex_names.keys()
 random.shuffle(cities)
+
 total_cost = 0
-city_1 = cities[1]
-for city_2 in [city for city in cities if city != city_1]:
-    pathtest, cost = g.dijkstra(city_1, city_2, 1, [], {}, {})
-    g.create_path(pathtest)
-    print g.hex_names[city_1], g.hex_names[city_2], cost
-    total_cost += cost
+for i in range(len(cities)-1):
+   pathtest, cost = g.dijkstra(cities[i], cities[i+1], 1, [], {}, {})
+   g.create_path(pathtest)
+   print g.hex_names[cities[i]], g.hex_names[cities[i+1]], cost
+   total_cost += cost
 print total_cost
+
+
+# This chooses a slightly longer path...
+# Emmen Camino 23
+# Emmen Baker 15
+# Emmen Dawson 7
+# Emmen Abbot 9
 
 
 input("Press Enter to continue...")

@@ -104,10 +104,7 @@ class Cell(object):
 
     def __init__(self, terrain, name):
         self.terrain = terrain
-
-        #if self.terrain in ['cs', 'cm', 'cl']:
         self.name = name
-
         self.hex_image = pg.Surface((h, h + 2))
         self.terrain_graphic = {"p": self.plain,
                                 "m": self.mount,
