@@ -15,38 +15,30 @@ terr_matrix = [line.replace('\n', '').split(' ') for line in f]
 
 start = (9,2) #(int(r.random()*10), int(r.random()*30))
 
-#(0, 0), (3, 2), (1, 8), (4, 16), (5, 28), (1, 23), (9, 6) 12.233111259
-#((0, 0), (3, 2), (1, 23), (1, 8), (5, 28), (4, 16), (9, 6)) 13.6014681759
-#((0, 0), (3, 2), (4, 16), (1, 23), (1, 8), (5, 28), (9, 6)) 13.0030125239
-#((0, 0), (3, 2), (1, 8), (1, 23), (5, 28), (4, 16), (9, 6)) 14.0475307379
-#((0, 0), (3, 2), (1, 8), (4, 16), (1, 23), (5, 28), (9, 6)) 14.3929961554
-#((0, 0), (3, 2), (4, 16), (1, 23), (1, 8), (5, 28), (9, 6)) 13.0030125239
-#((0, 0), (3, 2), (1, 8), (5, 28), (1, 23), (4, 16), (9, 6)) 13.2230550023
-
-hex_names = {start: "START",
-             (3, 2): "Abbot",
-             (9, 6): "Baker",
-             (5, 28): "Camino",
-             (1, 8): "Dawson",
-             (4, 16): "Emmen",
-             (1, 23): "Flint" }
-
-resources = {(3, 2): ["Coffee"],
-            (9, 6): ["Bauxite", "Corn"],
-            (5, 28): ["Bauxite"],
-            (1, 8): ["Copper"],
-            (4, 16): ["Corn"],
-            (1, 23): ["Cotton"] }
+# hex_names = {start: "START",
+#              (3, 2): "Abbot",
+#              (9, 6): "Baker",
+#              (5, 28): "Camino",
+#              (1, 8): "Dawson",
+#              (4, 16): "Emmen",
+#              (1, 23): "Flint" }
+#
+# resources = {(3, 2): ["Coffee"],
+#             (9, 6): ["Bauxite", "Corn"],
+#             (5, 28): ["Bauxite"],
+#             (1, 8): ["Copper"],
+#             (4, 16): ["Corn"],
+#             (1, 23): ["Cotton"] }
 
 inv_resources = {}
 for coord, rsc_list in resources.iteritems():
     for rsc in rsc_list:
         inv_resources[rsc] = inv_resources.get(rsc, [])
         inv_resources[rsc].append(coord)
-
-demands = {(3, 2): "Corn", # to Abbot (from Emmen)
-            (5, 28): "Copper", # to Camino (from Dawson)
-            (1, 23): "Bauxite" } #to Flint (from Camino) (OR BAKER?????)
+#
+# demands = {(3, 2): "Corn", # to Abbot (from Emmen)
+#             (5, 28): "Copper", # to Camino (from Dawson)
+#             (1, 23): "Bauxite" } #to Flint (from Camino) (OR BAKER?????)
 inv_demands = {}
 for coord, rsc in demands.iteritems():
     inv_demands[rsc] = inv_demands.get(rsc, [])

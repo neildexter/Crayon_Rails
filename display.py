@@ -81,7 +81,20 @@ def city_l(hex_surf):  #STILL NOT DEFINED
     1 + 1
 
 def water(hex_surf):
-    1 + 1
+    pg.draw.polygon(hex_surf, blue,
+        [(h/2,0), (h-hex_gap, h/4),
+        (h-hex_gap, 3*h/4), (h/2,h),
+        (hex_gap, 3*h/4), (hex_gap, h/4),
+        (h/2,0)], 0)
+
+def impassable_land(hex_surf):
+    pg.draw.polygon(hex_surf, brown,
+        [(h/2,0), (h-hex_gap, h/4),
+        (h-hex_gap, 3*h/4), (h/2,h),
+        (hex_gap, 3*h/4), (hex_gap, h/4),
+        (h/2,0)], 0)
+def ferry(hex_surf):
+    1+1 # Print pretty anchor picture
 
 # Prints the name (not called from terrain graphic dictionary!!)
 def print_name(hex_surf,name):
@@ -132,8 +145,9 @@ terrain_graphic = {"p": plain,
                     "a": alp,
                     "d": desert,
                     "s": swamp,
-                    "cs": city_s,
-                    "cm": city_m,
-                    "cl": city_l,
-                    "w": water
-        }
+                    "S": city_s,
+                    "M": city_m,
+                    "L": city_l,
+                    "w": water,
+                    "i": impassable_land,
+                    "f": ferry}

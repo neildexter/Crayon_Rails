@@ -31,6 +31,7 @@ class test(object):
 
 a = test({},{})
 a.test1_dict = {}
+b = test({},{})
 for i in range(len(terr_matrix)):
     for j in range(len(terr_matrix[0])):
         a.test1_dict[(i,j,'ne')] = 0
@@ -47,7 +48,9 @@ for i in range(len(terr_matrix)):
 
 test_time1 = time.time()
 for i in range(1000):
-    b = copy.deepcopy(a)
+    #b = copy.deepcopy(a)
+    b.test1_dict = copy.copy(a.test1_dict)
+    b.test2_dict = copy.copy(a.test2_dict)
 print time.time() - test_time1
 
 test_time2 = time.time()
