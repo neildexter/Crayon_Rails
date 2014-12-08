@@ -1,7 +1,7 @@
-import math
+import math as m
 
 h = 30 # size (height) of the square bounding box for each hex image
-hex_gap = h*(2-math.sqrt(3))/4
+hex_gap = h*(2-m.sqrt(3))/4
 hex_width = h - 2*hex_gap
 hex_line_width = 1
 rail_width = 3
@@ -56,12 +56,12 @@ player_color = { #0: no player
 				 4: brown,
 				 5: yellow }
 
-track_endpts = { "ne": (h/2 + h/(2*math.sqrt(3)),	0),
+track_endpts = { "ne": (h/2 + h/(2*m.sqrt(3)),	0),
 				 "e" : (h-hex_gap,					h/2),
-				 "se": (h/2 + h/(2*math.sqrt(3)),	h),
-				 "sw": (h/2 - h/(2*math.sqrt(3)),	h),
+				 "se": (h/2 + h/(2*m.sqrt(3)),	h),
+				 "sw": (h/2 - h/(2*m.sqrt(3)),	h),
 				 "w" : (hex_gap,					h/2),
-				 "nw": (h/2 - h/(2*math.sqrt(3)),	0) }
+				 "nw": (h/2 - h/(2*m.sqrt(3)),	0) }
 
 inf = float('inf')
 # Cost to move to terrain depending on type
