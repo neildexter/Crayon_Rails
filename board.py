@@ -36,7 +36,12 @@ class Board(object):
             occupied_by = self.board[a[0],a[1]].tracks[odd_tracks[a_dist]]
 
         if occupied_by == 0:
-            cost = terr_cost[self.board[b[0],b[1]].terrain]
+            a_terr = self.board[b[0],b[1]].terrain
+            b_terr = self.board[a[0],a[1]].terrain
+            if a_terr == 'L' and b_terr == 'L':
+                cost = 0
+            else:
+                cost = terr_cost[b_terr]
         elif occupied_by == player_num:
             # Could set cost to small number to reduce unnecessary travel when building paths
             # (or larger for saving turns (.6?))

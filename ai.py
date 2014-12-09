@@ -134,9 +134,9 @@ for perm in all_perms:
     total_cost_all = 0.
     total_cost_delivery = 0
     # Adds the start node to the tuple before running calculations
-    lperm = list(perm)
-    lperm.insert(0,start)
-    perm = tuple(lperm)
+    #lperm = list(perm)
+    #lperm.insert(0,start)
+    perm = (start,)+perm
     ai_payout[perm] = 0
 
     for i in range(len(perm)-1):
