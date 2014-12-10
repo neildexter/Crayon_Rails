@@ -16,7 +16,7 @@ def display(brd):
 
     for i in range(brd.height):
         for j in range(brd.width):
-            screen.blit(draw_hex_surf(brd.get(i,j),(i,j)), corner(i, j))
+            screen.blit(draw_hex_surf(brd,(i,j)), corner(i, j))
     pg.display.flip()
 
 # Returns the coordinate for the upper left hand corner of a hex image as placed on the board
@@ -109,7 +109,7 @@ def ferry(hex_surf):
     1+1 # Print pretty anchor picture
 
 # Prints the name (not called from terrain graphic dictionary!!)
-def print_name(hex_surf,name):
+def print_name(hex_surf, name):
     size = h/3
     # Define letter as a font object
     letter = pg.font.Font(None, size)
@@ -126,7 +126,7 @@ def draw_rivers(hex_surf, loc):
         if loc+(direction,) in rivers:
             pg.draw.line(hex_surf, blue_water,river_edge[direction][0], river_edge[direction][1], river_width)
 
-def draw_hex_surf(cell, loc):
+def draw_hex_surf(board, loc):
     hex_surf = pg.Surface((h, h+2))
     hex_surf.fill(color_key)
     hex_surf.set_colorkey(color_key)
@@ -144,18 +144,17 @@ def draw_hex_surf(cell, loc):
     #     (h-hex_gap, 3*h/4), (h/2,h),
     #     (hex_gap, 3*h/4), (hex_gap, h/4),
     #     (h/2,0)], line_width)
+    compass_dirs = [k for (i,j,k) in board.tracks if (i,j) == loc]
+    for direction in compass_dirs:
+        num = board.tracks[loc+(direction,)]
+        pg.draw.line(hex_surf, player_color[num], (h/2, h/2), track_endpts[direction], rail_width)
 
-    for direction in cell.tracks:
-        num = cell.tracks[direction]
-        if num != 0:
-            pg.draw.line(hex_surf, player_color[num], (h/2, h/2), track_endpts[direction], rail_width)
-
-    terrain_graphic[cell.terrain](hex_surf)
+    terrain_graphic[board.terrain[loc]](hex_surf)
 
     #draw_rivers(hex_surf, loc)
 
-    if cell.name != None:
-        print_name(hex_surf,cell.name)
+    if hex_names.get(loc,None) is not None:
+        print_name(hex_surf,hex_names[loc])
     return hex_surf
 
 terrain_graphic = {"p": plain,

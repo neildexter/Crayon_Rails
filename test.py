@@ -1,4 +1,4 @@
-import board, cell, time, copy
+import board, time, copy
 
 f = open('game_board.txt', 'r')
 terr_matrix = [line.replace('\n', '').split(' ') for line in f]
@@ -13,10 +13,10 @@ hex_names = {start: "START",
              (4, 16): "Emmen",
              (1, 23): "Flint" }
 
-b1 = board.Board(terr_matrix,hex_names)
+b1 = board.Board({},{},terr_matrix)
 
 class test(object):
-    def __init__(self, test1_dict, test2_dict):
+    def __init__(self, test1_dict = {}, test2_dict = {}):
         self.test1_dict = test1_dict
         self.test2_dict = test2_dict
     # def __getattr__(self, key):
@@ -29,9 +29,9 @@ class test(object):
     #         setattr(result, k, deepcopy(v,mem))
     #     return result
 
-a = test({},{})
-a.test1_dict = {}
-b = test({},{})
+a = test()
+b = board.Board()
+
 for i in range(len(terr_matrix)):
     for j in range(len(terr_matrix[0])):
         a.test1_dict[(i,j,'ne')] = 0
@@ -41,7 +41,6 @@ for i in range(len(terr_matrix)):
         a.test1_dict[(i,j,'w')] = 0
         a.test1_dict[(i,j,'nw')] = 0
 
-a.test2_dict = {}
 for i in range(len(terr_matrix)):
     for j in range(len(terr_matrix[0])):
         a.test2_dict[(i,j)] = terr_matrix[i][j]
@@ -55,5 +54,6 @@ print time.time() - test_time1
 
 test_time2 = time.time()
 for i in range(1000):
-    b2 = copy.deepcopy(b1)
+    b = board.Board(copy.copy(b1.terrain), copy.copy(b1.tracks))
+
 print time.time() - test_time2

@@ -81,7 +81,8 @@ terr_cost = { 	"p": 1,
 				"M": 3,
 				"L": 5,
                 "f": 6,
-				"w": inf }
+				"w": inf,
+                "i": inf}
 
 resources_by_name = {'Agra': ['Textiles'],
                      'Ahmadabad': ['Cotton'],

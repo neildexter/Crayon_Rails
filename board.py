@@ -25,37 +25,39 @@ class Board(object):
         return item_valid
 
     # Returns the cost of going from location tuple a to tuple b
-    def cost(self, a, b, player_num):
+    def calc_cost(self, a, b, player_num):
         cost = inf # cost is infinite unless otherwise set
         rvr = 0
-        #if self.adj(a, b) == True and self.valid(b):   THIS IS NECESSARY IF NOT RUNNING A STAR!!!!!
-        a_dist = tuple(map(op.sub, b, a))
-        # Determines if the track to the destination is occupied by another player
-        if a[0] % 2 == 0:
-            occupied_by = self.board[a[0],a[1]].tracks[even_tracks[a_dist]]
-            rvr += rivers.get(a+(even_tracks[a_dist],),0)
-        else:
-            occupied_by = self.board[a[0],a[1]].tracks[odd_tracks[a_dist]]
-            rvr += rivers.get(a+(odd_tracks[a_dist],),0)
-        if rvr == 0:
-            b_dist = tuple(map(op.sub, a, b))
-            if b[0] % 2 == 0:
-                rvr += rivers.get(b+(even_tracks[b_dist],),0)
+        if self.adj(a, b) == True and self.valid(b):   #THIS IS NECESSARY IF NOT RUNNING A STAR!!!!!
+            a_dist = tuple(map(op.sub, b, a))
+            # Determines if the track to the destination is occupied by another player
+            if a[0] % 2 == 0:
+                #occupied_by = self.board[a[0],a[1]].tracks[even_tracks[a_dist]]
+                occupied_by = self.tracks.get(a+(even_tracks[a_dist],),0)
+                rvr += rivers.get(a+(even_tracks[a_dist],),0)
             else:
-                rvr += rivers.get(b+(odd_tracks[b_dist],),0)
-        if occupied_by == 0:
-            a_terr = self.board[a[0],a[1]].terrain
-            b_terr = self.board[b[0],b[1]].terrain
-            if a_terr == 'L' and b_terr == 'L':
-                cost = 0
+                #occupied_by = self.board[a[0],a[1]].tracks[odd_tracks[a_dist]]
+                occupied_by = self.tracks.get(a+(odd_tracks[a_dist],),0)
+                rvr += rivers.get(a+(odd_tracks[a_dist],),0)
+            if rvr == 0:
+                b_dist = tuple(map(op.sub, a, b))
+                if b[0] % 2 == 0:
+                    rvr += rivers.get(b+(even_tracks[b_dist],),0)
+                else:
+                    rvr += rivers.get(b+(odd_tracks[b_dist],),0)
+            if occupied_by == 0:
+                a_terr = self.terrain[a]
+                b_terr = self.terrain[b]
+                if a_terr == 'L' and b_terr == 'L':
+                    cost = 0
+                else:
+                    cost = terr_cost[b_terr]
+                    if rvr > 0:
+                        cost += 2
+            elif occupied_by == player_num:
+                cost = 0 # "free" to rebuild over owned track
             else:
-                cost = terr_cost[b_terr]
-                if rvr > 0:
-                    cost += 2
-        elif occupied_by == player_num:
-            cost = 0 # "free" to rebuild over owned track
-        else:
-            cost = inf # can't build over other player's tracks
+                cost = inf # can't build over other player's tracks
         return cost
 
      # Takes in tuples and returns True if adjacent (False if identity or not adjacent)
@@ -94,11 +96,11 @@ class Board(object):
         for i in range(1, len(node_list)):
             self.create_rail(node_list[i - 1], node_list[i], player_num)
 
-    def tracks_at(self,loc):
-        if loc[0] % 2 == 0:
-            print self.board[loc[0],loc[1]].tracks[even_tracks]
-        else:
-            print self.board[loc[0],loc[1]].tracks[odd_tracks]
+    # def tracks_at(self,loc):
+    #     if loc[0] % 2 == 0:
+    #         print self.board[loc[0],loc[1]].tracks[even_tracks]
+    #     else:
+    #         print self.board[loc[0],loc[1]].tracks[odd_tracks]
 
     def create_rail(self, a, b, player_num):  # Creates a rail between the two nodes
         if not self.adj(a, b):
@@ -108,41 +110,45 @@ class Board(object):
             b_dist = tuple(map(op.sub, a, b))
 
             if a[0] % 2 == 0:
-                self.board[a[0],a[1]].tracks[even_tracks[a_dist]] = player_num
+                self.tracks[a+(even_tracks[a_dist],)] = player_num
             else:
-                self.board[a[0],a[1]].tracks[odd_tracks[a_dist]] = player_num
+                self.tracks[a+(odd_tracks[a_dist],)] = player_num
 
             # If b is in an odd row, interpret the distance accordingly
             if b[0] % 2 == 0:
-                self.board[b[0],b[1]].tracks[even_tracks[b_dist]] = player_num
+                self.tracks[b+(even_tracks[b_dist],)] = player_num
             else:
-                self.board[b[0],b[1]].tracks[odd_tracks[b_dist]] = player_num
+                self.tracks[b+(odd_tracks[b_dist],)] = player_num
+        self.cost_dict[(a,b)] = 0
+
     def get(self, i, j):
-        return self.board[i,j]
+        return self.terrain[(i,j)]
 
-    def __init__(self, terr_matrix):  # Initializes the game board from a file
-        #creates board with the height (# of rows) and width (# of cols)
-        #refer to board as self.board[height][width]
-
-        # Creates names for all cities/important hexes
-        #self.hex_names = hex_names
-        # Made inv_names more like a global variable
-        # self.inv_names = {name: coord for coord, name in self.hex_names.items()}
-        #self.terr_matrix = terr_matrix
-        self.height = len(self.terr_matrix)
-        self.width = len(self.terr_matrix[0])
-
-        # Two major dictionaries required
-        self.terrain = {}
-        self.tracks = {}
-
-        #self.board = np.empty((self.height, self.width),dtype=object)
-        # Creates an array of cells with (terrain, name). hex_names.get() returns None if empty
+    def set_terrain(self,terr_matrix):
+        self.height = len(terr_matrix)
+        self.width = len(terr_matrix[0])
         for i in range(self.height):
             for j in range(self.width):
                 self.terrain[(i,j)] = terr_matrix[i][j]
                 #self.board[i,j] = c.Cell(terr_matrix[i][j], self.hex_names.get((i, j)))
 
+    def __init__(self, terrain = {}, tracks = {}, cost_dict = {}, terr_matrix = None):  # Initializes the game board from a file
+        # Default values set to 0 if nothing provided
+        self.terrain = terrain
+        self.tracks = tracks
+        self.cost_dict = cost_dict
+
+        if not terrain:
+            self.height = 0 # "i"
+            self.width = 0  # "j"
+        else:
+            self.height = max(i for (i,j) in self.terrain)
+            self.width = max(j for (i,j) in self.terrain)
+
+        #self.board = np.empty((self.height, self.width),dtype=object)
+        # Creates an array of cells with (terrain, name). hex_names.get() returns None if empty
+        if terr_matrix is not None:
+            self.set_terrain(terr_matrix)
         #self.create_display()
 
     def conv_to_cube(self,coord):
@@ -160,7 +166,7 @@ class Board(object):
 
     def heuristic(self,goal,current,next,player_num):
         dist = self.hex_distance(next,goal)
-        if self.cost(current,next,player_num) == 0:
+        if self.cost_dict[(current,next)] == 0:
             heur_cost = dist*.5
         else:
             heur_cost = dist
@@ -169,7 +175,7 @@ class Board(object):
     ### A star algorithm shamelessly ripped from http://www.redblobgames.com/pathfinding/a-star/implementation.html
     def a_star(self, start, goal, player_num):
         frontier = PriorityQueue()
-        frontier.put(start,0)
+        frontier.put(start, 0)
         came_from = {}
         cost_so_far = {}
         move_cost = {}
@@ -183,7 +189,7 @@ class Board(object):
                 break
 
             for next in self.adj_list(current):
-                new_cost = cost_so_far[current] + self.cost(current, next, player_num)
+                new_cost = cost_so_far[current] + self.cost_dict[(current, next)]
                 if new_cost < cost_so_far.get(next, inf):
                     move_cost[next] = move_cost[current]+1
                     cost_so_far[next] = new_cost
@@ -194,7 +200,7 @@ class Board(object):
         return came_from, cost_so_far, move_cost
 
     def ai_a_star(self,start,goal,player_num):
-        came_from, cost_so_far, move_cost = self.a_star(start,goal,1)
+        came_from, cost_so_far, move_cost = self.a_star(start,goal,player_num)
         moves = move_cost[goal]
         build_cost = cost_so_far[goal]
 
