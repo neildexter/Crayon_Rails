@@ -1,18 +1,20 @@
 import math as m
-
-h = 40 # size (height) of the square bounding box for each hex image
-hex_gap = h*(2-m.sqrt(3))/4
-hex_width = h - 2*hex_gap
+h_float = 58.6 # size (height) of the square bounding box for each hex image
+h = int(h_float)
+hex_gap_float = h_float*(2-m.sqrt(3))/4
+hex_gap = int(hex_gap_float)
+hex_width_float = h_float - 2*hex_gap_float
+hex_width = int(hex_width_float)
 hex_line_width = 1
 river_width = 4
 rail_width = 5
 plain_size = h/12
 
 
-left_pad = h/3
-top_pad = h/3
-right_pad = h/3
-bot_pad = h/3
+left_pad = 125 #h/3
+top_pad = 70 #h/3
+#right_pad = h/3
+#bot_pad = h/3
 
 white = (255,255,255)
 color_key = (254, 254, 254) # used as color key for blitting
@@ -75,9 +77,10 @@ terr_cost = { 	"p": 1,
 				"a": 5,
 				"d": 1,
 				"s": 3,
-				"cs": 3,
-				"cm": 3,
-				"cl": 5,
+				"S": 3,
+				"M": 3,
+				"L": 5,
+                "f": 6,
 				"w": inf }
 
 resources_by_name = {'Agra': ['Textiles'],

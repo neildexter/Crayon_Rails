@@ -27,24 +27,32 @@ class Board(object):
     # Returns the cost of going from location tuple a to tuple b
     def cost(self, a, b, player_num):
         cost = inf # cost is infinite unless otherwise set
+        rvr = 0
         #if self.adj(a, b) == True and self.valid(b):   THIS IS NECESSARY IF NOT RUNNING A STAR!!!!!
         a_dist = tuple(map(op.sub, b, a))
         # Determines if the track to the destination is occupied by another player
         if a[0] % 2 == 0:
             occupied_by = self.board[a[0],a[1]].tracks[even_tracks[a_dist]]
+            rvr += rivers.get(a+(even_tracks[a_dist],),0)
         else:
             occupied_by = self.board[a[0],a[1]].tracks[odd_tracks[a_dist]]
-
+            rvr += rivers.get(a+(odd_tracks[a_dist],),0)
+        if rvr == 0:
+            b_dist = tuple(map(op.sub, a, b))
+            if b[0] % 2 == 0:
+                rvr += rivers.get(b+(even_tracks[b_dist],),0)
+            else:
+                rvr += rivers.get(b+(odd_tracks[b_dist],),0)
         if occupied_by == 0:
-            a_terr = self.board[b[0],b[1]].terrain
-            b_terr = self.board[a[0],a[1]].terrain
+            a_terr = self.board[a[0],a[1]].terrain
+            b_terr = self.board[b[0],b[1]].terrain
             if a_terr == 'L' and b_terr == 'L':
                 cost = 0
             else:
                 cost = terr_cost[b_terr]
+                if rvr > 0:
+                    cost += 2
         elif occupied_by == player_num:
-            # Could set cost to small number to reduce unnecessary travel when building paths
-            # (or larger for saving turns (.6?))
             cost = 0 # "free" to rebuild over owned track
         else:
             cost = inf # can't build over other player's tracks
@@ -112,25 +120,28 @@ class Board(object):
     def get(self, i, j):
         return self.board[i,j]
 
-    def __init__(self, terr_matrix, hex_names):  # Initializes the game board from a file
-
+    def __init__(self, terr_matrix):  # Initializes the game board from a file
         #creates board with the height (# of rows) and width (# of cols)
         #refer to board as self.board[height][width]
 
         # Creates names for all cities/important hexes
-        self.hex_names = hex_names
-        # Makes inverse dictionary for finding coordinates by name
-        self.inv_names = {name: coord for coord, name in self.hex_names.items()}
-        self.terr_matrix = terr_matrix
+        #self.hex_names = hex_names
+        # Made inv_names more like a global variable
+        # self.inv_names = {name: coord for coord, name in self.hex_names.items()}
+        #self.terr_matrix = terr_matrix
         self.height = len(self.terr_matrix)
         self.width = len(self.terr_matrix[0])
 
-        self.board = np.empty((self.height, self.width),dtype=object)
+        # Two major dictionaries required
+        self.terrain = {}
+        self.tracks = {}
 
+        #self.board = np.empty((self.height, self.width),dtype=object)
         # Creates an array of cells with (terrain, name). hex_names.get() returns None if empty
         for i in range(self.height):
             for j in range(self.width):
-                self.board[i,j] = c.Cell(terr_matrix[i][j], self.hex_names.get((i, j)))
+                self.terrain[(i,j)] = terr_matrix[i][j]
+                #self.board[i,j] = c.Cell(terr_matrix[i][j], self.hex_names.get((i, j)))
 
         #self.create_display()
 
@@ -148,10 +159,11 @@ class Board(object):
         return sum(map(abs,map(op.sub, src_cube, dest_cube)))/2
 
     def heuristic(self,goal,current,next,player_num):
+        dist = self.hex_distance(next,goal)
         if self.cost(current,next,player_num) == 0:
-            heur_cost = 0
+            heur_cost = dist*.5
         else:
-            heur_cost = self.hex_distance(next,goal)
+            heur_cost = dist
         return heur_cost
 
     ### A star algorithm shamelessly ripped from http://www.redblobgames.com/pathfinding/a-star/implementation.html

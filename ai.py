@@ -9,46 +9,42 @@ pg.init()
 
 start_time = time.time()
 
-f = open('game_board.txt', 'r')
+f = open('india_rails_gameboard.txt', 'r')
 
 terr_matrix = [line.replace('\n', '').split(' ') for line in f]
 
-start = (9,2) #(int(r.random()*10), int(r.random()*30))
+inv_names = {name: coord for coord, name in hex_names.items()}
+resources = {}
 
-# hex_names = {start: "START",
-#              (3, 2): "Abbot",
-#              (9, 6): "Baker",
-#              (5, 28): "Camino",
-#              (1, 8): "Dawson",
-#              (4, 16): "Emmen",
-#              (1, 23): "Flint" }
-#
-# resources = {(3, 2): ["Coffee"],
-#             (9, 6): ["Bauxite", "Corn"],
-#             (5, 28): ["Bauxite"],
-#             (1, 8): ["Copper"],
-#             (4, 16): ["Corn"],
-#             (1, 23): ["Cotton"] }
+for name, rsc_list in resources_by_name.iteritems():
+    coord = inv_names[name]
+    resources[coord] = rsc_list
+
+start = inv_names["Calcutta"]
 
 inv_resources = {}
 for coord, rsc_list in resources.iteritems():
     for rsc in rsc_list:
         inv_resources[rsc] = inv_resources.get(rsc, [])
         inv_resources[rsc].append(coord)
-#
-# demands = {(3, 2): "Corn", # to Abbot (from Emmen)
-#             (5, 28): "Copper", # to Camino (from Dawson)
-#             (1, 23): "Bauxite" } #to Flint (from Camino) (OR BAKER?????)
+
+##### IMPORTANT: Make sure payout keys are the same as demand keys, or it will not calculate final costs correctly
+
+demand_cards = [
+            ("Delhi",       "Machinery",     20),
+            ("Calcutta",    "Textiles",      13),
+            ("Jamshedpur",  "Millet",        20)]
+
+# ((26, 45), (20, 40), (13, 25), (16, 27), (20, 36), (26, 45), (25, 40)) 0.00318532850239 69 57 57.0
+
+#demands = {loc: needed}
+demands = {inv_names[dem[0]] : dem[1] for dem in demand_cards}
+payouts = {inv_names[dem[0]] : dem[2] for dem in demand_cards}
+
 inv_demands = {}
 for coord, rsc in demands.iteritems():
     inv_demands[rsc] = inv_demands.get(rsc, [])
     inv_demands[rsc].append(coord)
-
-##### IMPORTANT: Make sure payout keys are the same as demand keys, or it will not calculate final costs correctly
-
-payouts = {(3, 2): 20,
-            (5, 28): 37,
-            (1, 23): 16 }
 
 # Returns list of indices that have a resource
 # [i for i, j in enumerate(resources.values()) if 'a' in j]
@@ -62,7 +58,8 @@ s1 = inv_resources[demands[d1]]
 s2 = inv_resources[demands[d2]]
 s3 = inv_resources[demands[d3]]
 
-#print s1, s2, s3
+print d1, d2, d3
+print s1, s2, s3
 
 b1 = b.Board(terr_matrix,hex_names)
 b2 = copy.deepcopy(b1)
@@ -118,10 +115,12 @@ for source1 in s1:
 # all_perms = []
 # all_perms[:] = list(ifilter(good, perms))
 
-print len(all_perms)
 #### NOTE: Move, THEN build. Need to factor this into the model
 #### If first_turn, plan two builds
 
+iter = 0.
+total_perms = float(len(all_perms))
+print total_perms
 for perm in all_perms:
     b2 = copy.deepcopy(b1)
     delivery = 0
@@ -129,7 +128,7 @@ for perm in all_perms:
     payouts_remaining = copy.copy(payouts)
     total_build_cost = 0
     total_moves = 0
-    cash_on_hand = 33
+    cash_on_hand = 50
     loan_to_repay = 0
     total_cost_all = 0.
     total_cost_delivery = 0
@@ -138,7 +137,6 @@ for perm in all_perms:
     #lperm.insert(0,start)
     perm = (start,)+perm
     ai_payout[perm] = 0
-
     for i in range(len(perm)-1):
         build_cost, moves = b2.ai_a_star(perm[i],perm[i+1],1)
 
@@ -176,8 +174,12 @@ for perm in all_perms:
     # Need to use an increasing function that is approximately f(x) = x for large numbers, exp(x) for negative
     ai_payout[perm] = inc_func(delivery)/(total_moves/12.)
     # Deletes the notional board b2 so the name can be reused for testing each other possible permutations
-    #print perm, ai_payout[perm], total_moves, total_build_cost, total_cost_all
+    print perm, ai_payout[perm], total_moves, total_build_cost, total_cost_all
+    iter += 1
+    print iter/total_perms
     del b2
+
+
 
 best_perm = max(ai_payout, key = ai_payout.get)
 
@@ -190,50 +192,10 @@ best_perm = max(ai_payout, key = ai_payout.get)
 
 print "optimal\n", best_perm, ai_payout[best_perm]
 
-
-delivery = 0
-delivery_num = 0
-payouts_remaining = copy.copy(payouts)
-total_build_cost = 0
-total_moves = 0
-
-# 3.085  a_star
-# 0.493 heuristic
-# 0.487 conv_to_cube
-# 0.737 hex_distance
-# 1.036 valid
-# 5.105 cost
-#### 4.038 adj (unnecessary checking...no need if cost is always invoked from a_star which uses adjacent vertices anyway
-# 1.116 (lambda???) (could possibly be a list comprehension or something?)
-# 1.810 adj_list
-# 1.429 dict:get // reduce some simple dictionaries to lists
-# 5.951 map
-# 5.446 deep_copy
-# 2.537 deepcopy:dict
-# 1.011 deepcopy:tuple
-# 0.896 copy:reconstruct
-
-
+print b1.cost(inv_names["Patna"], (21, 39), 1)
 
 for i in range(len(best_perm)-1):
     build_cost, moves = b1.ai_a_star(best_perm[i],best_perm[i+1],1)
-
-    # total_moves += moves
-    # total_build_cost += build_cost
-    # build_cost_so_far += build_cost
-    # if best_perm[i+1] in payouts_remaining:
-    #     # pop forces dictionary to remove payments that have been issues
-    #     delivery_num = 3 - len(payouts_remaining)
-    #     delivery += (payouts_remaining.pop(best_perm[i+1])-build_cost_so_far)*(dsc_factor)**delivery_num
-    #     build_cost_so_far = 0
-    #ai_payout[perm] += (money_earned-build_cost)*(dsc_factor)**(total_moved/12.)
-    #print build_cost_so_far
-# Deletes the notional board b2 so the name can be reused for testing each other possible permutations
-#print delivery/total_moves, total_build_cost, total_moves
-#print perm, "payout", ai_payout[perm], "total moved", total_moved, "build cost", total_build_cost
-
-#print "ai payout", ai_payout[best_perm], "total build cost", total_build_cost, "total moves", total_moves
-
 d.display(b1)
 
 print "total time", time.time()-start_time

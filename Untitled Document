@@ -1,0 +1,46 @@
+ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+         767 seconds total ai.py:1(<module>)
+  1824788    1.336    0.000    2.900    0.000 board.py:11(put)
+  3630124    2.803    0.000    2.803    0.000 board.py:145(conv_to_cube)
+  1815062    4.177    0.000   10.324    0.000 board.py:153(hex_distance)
+  1815062    2.643    0.000   25.222    0.000 board.py:158(heuristic)
+     9726   15.380    0.002  114.447    0.012 board.py:167(a_star)
+# Create dictionary that has the cost for moving from every square; each time you create a new game, you create one for each player, and edit them whenever
+1. rails are built
+2. events destroy things
+# This will cut down time to ?
+  6612678    4.909    0.000    6.390    0.000 board.py:19(valid)
+  8427741   43.133    0.000   58.532    0.000 board.py:28(cost)
+  1102113    8.608    0.000   19.629    0.000 board.py:83(adj_list)
+
+
+# Replace class data structure with dictionary. Use shallow copies instead of deep copies.
+# Should cut to 5s
+227463583/1621  233.349    0.000  630.019    0.389 copy.py:145(deepcopy)
+100502/1621    3.954    0.000   11.164    0.007 copy.py:226(_deepcopy_list)
+  6216535   48.159    0.000   61.560    0.000 copy.py:234(_deepcopy_tuple)
+18396729/1621  109.175    0.000  629.765    0.389 copy.py:253(_deepcopy_dict)
+ 31055118   27.090    0.000   34.143    0.000 copy.py:267(_keep_alive)
+6132243/1621   38.328    0.000  629.910    0.389 copy.py:306(_reconstruct)
+  6132243    3.629    0.000    5.468    0.000 copy_reg.py:92(__newobj__)
+
+  1111839    1.943    0.000    1.943    0.000 {_heapq.heappop}
+  1824788    1.564    0.000    1.564    0.000 {_heapq.heappush}
+  6132243    1.839    0.000    1.839    0.000 {built-in method __new__ of type object at 0x890140}
+ 12267494    7.540    0.000    7.540    0.000 {getattr}
+  6132381    7.087    0.000    7.087    0.000 {hasattr}
+289366331   27.343    0.000   27.343    0.000 {id}
+ 18398859    6.378    0.000    6.378    0.000 {isinstance}
+  6133891    2.013    0.000    2.013    0.000 {issubclass}
+13480421/13480342    2.021    0.000    2.021    0.000 {len}
+ 27090574   19.981    0.000   20.209    0.000 {map}
+     1621    5.607    0.003  616.705    0.380 {method '__deepcopy__' of 'numpy.ndarray' objects}
+  6132243   33.745    0.000   33.745    0.000 {method '__reduce_ex__' of 'object' objects}
+ 43765787    6.899    0.000    6.899    0.000 {method 'append' of 'list' objects}
+287404348   56.390    0.000   56.390    0.000 {method 'get' of 'dict' objects}
+ 18396737    7.518    0.000    7.518    0.000 {method 'iteritems' of 'dict' objects}
+  6132305    4.170    0.000    4.170    0.000 {method 'update' of 'dict' objects}
+  6613004    1.482    0.000    1.482    0.000 {min}
+        1    2.350    2.350    4.623    4.623 {pygame.display.set_mode}
+  6228374    2.983    0.000    2.983    0.000 {range}
+

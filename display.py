@@ -3,15 +3,16 @@ import pygame as pg
 
 def display(brd):
     # Uses first (index [0]) of corner function to get x value (width)
-    screen_width = int(m.floor(corner(0, brd.width)[0] + hex_width / 2 + left_pad + right_pad))
+    #screen_width = int(m.floor(corner(0, brd.width)[0] + hex_width / 2 + left_pad + right_pad))
     # Uses second (index [1]) of corner function to get y value (width)
-    screen_height = int(m.floor(corner(brd.height, 0)[1] + top_pad + bot_pad))
+    #screen_height = int(m.floor(corner(brd.height, 0)[1] + top_pad + bot_pad))
+    # ORIGINAL PHOTO: 2897 = 56 wide
+    bg_image = pg.image.load("Board3.JPG")
 
 
-    print screen_height
-
-    screen = pg.display.set_mode([screen_width, screen_height])
-    screen.fill(white)
+    screen = pg.display.set_mode([bg_image.get_width(), bg_image.get_height()])
+    screen.blit(bg_image, (0,0))
+    #screen.fill(white)
 
     for i in range(brd.height):
         for j in range(brd.width):
@@ -21,16 +22,16 @@ def display(brd):
 # Returns the coordinate for the upper left hand corner of a hex image as placed on the board
 def corner(i, j):
     if i % 2 == 0:  # if row number is even
-        x = left_pad - hex_gap + hex_width*j
+        x = left_pad - hex_gap_float + hex_width_float*j
     else:
-        x = left_pad - hex_gap + hex_width*(j + 0.5)
+        x = left_pad - hex_gap + hex_width_float*(j + 0.5)
 
-    y = top_pad + (h/2.0 + hex_width/(2.0*m.sqrt(3.0)))*i
+    y = top_pad + (h_float/2.0 + hex_width_float/(2.0*m.sqrt(3.0)))*i
 
-    return (x, y)
+    return (int(x), int(y))
 
 def plain(hex_surf):
-    pg.draw.circle(hex_surf, black, (h / 2, h / 2), h/12, 0)
+    pg.draw.circle(hex_surf, black, (h/2, h/2), h/12, 0)
 
 def draw_center_triang(hex_surf, color, width):
     wth = h/7.
@@ -75,10 +76,10 @@ def city_s(hex_surf):
 def city_m(hex_surf):
     width = int(2. * h / 4.)
     height = width  # since square
-    left = (h - width) / 2
+    left = int((h - width) / 2)
     top = left  # same coordinate for both since square
     pg.draw.rect(hex_surf, red, pg.Rect((left, top), (width, height)), 0)
-    pg.draw.circle(hex_surf, black, (h/2, h/2), h/12, 0)
+    pg.draw.circle(hex_surf, black,(h/2, h/2), h/12, 0)
 
 def city_l(hex_surf):  #STILL NOT DEFINED
     #placeholder
@@ -90,18 +91,20 @@ def city_l(hex_surf):  #STILL NOT DEFINED
     pg.draw.circle(hex_surf, black, (h/2, h/2), h/12, 0)
 
 def water(hex_surf):
-    pg.draw.polygon(hex_surf, blue_water,
-        [(h/2+1,0), (h-hex_gap, h/4),
-        (h-hex_gap, 3*h/4), (h/2,h),
-        (hex_gap, 3*h/4), (hex_gap, h/4),
-        (h/2-1,0)], 0)
+    1+1
+    #pg.draw.polygon(hex_surf, blue_water,
+    #    [(h/2+1,0), (h-hex_gap, h/4),
+    #    (h-hex_gap, 3*h/4), (h/2,h),
+    #    (hex_gap, 3*h/4), (hex_gap, h/4),
+    #    (h/2-1,0)], 0)
 
 def impassable_land(hex_surf):
-    pg.draw.polygon(hex_surf, brown,
-        [(h/2+1,0), (h-hex_gap, h/4),
-        (h-hex_gap, 3*h/4), (h/2,h),
-        (hex_gap, 3*h/4), (hex_gap, h/4),
-        (h/2-1,0)], 0)
+    1+1
+    #pg.draw.polygon(hex_surf, brown,
+    #    [(h/2+1,0), (h-hex_gap, h/4),
+    #    (h-hex_gap, 3*h/4), (h/2,h),
+    #    (hex_gap, 3*h/4), (hex_gap, h/4),
+    #    (h/2-1,0)], 0)
 def ferry(hex_surf):
     1+1 # Print pretty anchor picture
 
@@ -118,7 +121,7 @@ def print_name(hex_surf,name):
     pic.set_colorkey(color_key)
     hex_surf.blit(pic, (0, 0))
 
-def print_rivers(hex_surf, loc):
+def draw_rivers(hex_surf, loc):
     for direction in compass_dirs:
         if loc+(direction,) in rivers:
             pg.draw.line(hex_surf, blue_water,river_edge[direction][0], river_edge[direction][1], river_width)
@@ -145,11 +148,11 @@ def draw_hex_surf(cell, loc):
     for direction in cell.tracks:
         num = cell.tracks[direction]
         if num != 0:
-            pg.draw.line(hex_surf, player_color[num], (h / 2, h / 2), track_endpts[direction], rail_width)
+            pg.draw.line(hex_surf, player_color[num], (h/2, h/2), track_endpts[direction], rail_width)
 
     terrain_graphic[cell.terrain](hex_surf)
 
-    print_rivers(hex_surf, loc)
+    #draw_rivers(hex_surf, loc)
 
     if cell.name != None:
         print_name(hex_surf,cell.name)
