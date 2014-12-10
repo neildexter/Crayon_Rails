@@ -129,7 +129,7 @@ for source1 in s1:
 def perm_cost(board, start, perm, cash_on_hand, loan_to_repay):
     perm = (start,)+perm
 
-    test_board = b.Board(copy.copy(board.terrain), copy.copy(board.tracks),copy.copy(board.cost_dict))
+    test_board = b.Board(copy.copy(board.terrain), copy.copy(board.tracks), copy.copy(board.cost_dict), board.adj_list)
     payouts_remaining = copy.copy(payouts)
     delivery = 0
     delivery_num = 0
@@ -138,7 +138,7 @@ def perm_cost(board, start, perm, cash_on_hand, loan_to_repay):
     total_cost_all = 0.
     total_cost_delivery = 0
     for i in range(len(perm)-1):
-        build_cost, moves = test_board.ai_a_star(perm[i],perm[i+1],1)
+        build_cost, moves = test_board.ai_a_star(perm[i], perm[i+1], 1)
 
         total_moves += moves
         total_build_cost += build_cost

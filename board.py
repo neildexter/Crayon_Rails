@@ -82,7 +82,7 @@ class Board(object):
         return True
 
     # Returns a list of all valid tuples adjacent to tuple a
-    def adj_list(self, a):
+    def find_adj(self, a):
         # Check for even or odd y value
         if a[0] % 2 == 0:
             all_adj = [tuple(map(op.add, a, b)) for b in even_list]
@@ -91,6 +91,11 @@ class Board(object):
 
         valid_adj = [item for item in all_adj if self.valid(item)]
         return valid_adj
+
+    def set_adj_list(self):
+        for i in self.height:
+            for j in self.width:
+                self.adj_list[(i,j)] = self.find_adj((i,j))
 
     def create_path(self, node_list, player_num):
         for i in range(1, len(node_list)):
@@ -132,11 +137,12 @@ class Board(object):
                 self.terrain[(i,j)] = terr_matrix[i][j]
                 #self.board[i,j] = c.Cell(terr_matrix[i][j], self.hex_names.get((i, j)))
 
-    def __init__(self, terrain = {}, tracks = {}, cost_dict = {}, terr_matrix = None):  # Initializes the game board from a file
+    def __init__(self, terrain = {}, tracks = {}, cost_dict = {}, adj_list = {}, terr_matrix = None):  # Initializes the game board from a file
         # Default values set to 0 if nothing provided
         self.terrain = terrain
         self.tracks = tracks
         self.cost_dict = cost_dict
+        self.adj_list = adj_list
 
         if not terrain:
             self.height = 0 # "i"
@@ -144,6 +150,9 @@ class Board(object):
         else:
             self.height = max(i for (i,j) in self.terrain)
             self.width = max(j for (i,j) in self.terrain)
+
+        if not adj_list:
+            self.set_adj_list()
 
         #self.board = np.empty((self.height, self.width),dtype=object)
         # Creates an array of cells with (terrain, name). hex_names.get() returns None if empty
@@ -188,10 +197,10 @@ class Board(object):
             if current == goal:
                 break
 
-            for next in self.adj_list(current):
-                new_cost = cost_so_far[current] + self.cost_dict[(current, next)]
+            for next in self.find_adj(current):
+                new_cost = cost_so_far[current] + self.cost_dict.get((current, next),inf)
                 if new_cost < cost_so_far.get(next, inf):
-                    move_cost[next] = move_cost[current]+1
+                    move_cost[next] = move_cost[current] + 1
                     cost_so_far[next] = new_cost
                     priority = new_cost + self.heuristic(goal,current,next,player_num)
                     frontier.put(next, priority)
@@ -200,7 +209,7 @@ class Board(object):
         return came_from, cost_so_far, move_cost
 
     def ai_a_star(self,start,goal,player_num):
-        came_from, cost_so_far, move_cost = self.a_star(start,goal,player_num)
+        came_from, cost_so_far, move_cost = self.a_star(start, goal, player_num)
         moves = move_cost[goal]
         build_cost = cost_so_far[goal]
 
