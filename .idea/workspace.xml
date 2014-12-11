@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6e79654e-a3a7-4eac-b9b6-f3dddd526fe9" name="Default" comment="Fixed path finding; permutes cities and serially finds the best routes to connect each to existing track.">
+    <list default="true" id="6e79654e-a3a7-4eac-b9b6-f3dddd526fe9" name="Default" comment="Fixed path finding; permutes cities and serially finds the best routes to connect each to existing track">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ai_test.py" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map.JPG" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map.Rivers.JPG" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map_BW_Threshold.JPG" afterPath="" />
@@ -9,6 +10,9 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/dijkstra.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ai.py" afterPath="$PROJECT_DIR$/ai.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/board.py" afterPath="$PROJECT_DIR$/board.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/globals.py" afterPath="$PROJECT_DIR$/globals.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test.py" afterPath="$PROJECT_DIR$/test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test2.py" afterPath="$PROJECT_DIR$/test2.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Crayon_Rails.iws" />
@@ -32,10 +36,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ai.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="ai.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ai.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="132" column="0" selection-start="4357" selection-end="4357" vertical-scroll-proportion="5.885714" vertical-offset="2186" max-vertical-offset="3390">
+            <state line="172" column="0" selection-start="6576" selection-end="6576" vertical-scroll-proportion="0.5973451" vertical-offset="2310" max-vertical-offset="2985">
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -43,22 +47,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="board.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="board.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/board.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="202" column="60" selection-start="7640" selection-end="7640" vertical-scroll-proportion="0.83102494" vertical-offset="2730" max-vertical-offset="3480">
+            <state line="121" column="55" selection-start="4819" selection-end="4819" vertical-scroll-proportion="0.0" vertical-offset="1611" max-vertical-offset="3855">
               <folding>
-                <element signature="e#0#91#0" expanded="true" />
+                <element signature="e#0#28#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cell.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/cell.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="31" selection-start="565" selection-end="565" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
-              <folding />
             </state>
           </provider>
         </entry>
@@ -66,7 +61,7 @@
       <file leaf-file-name="globals.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/globals.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="76" column="23" selection-start="1770" selection-end="1770" vertical-scroll-proportion="0.0" vertical-offset="931" max-vertical-offset="10065">
+            <state line="674" column="27" selection-start="21586" selection-end="21586" vertical-scroll-proportion="0.0" vertical-offset="9868" max-vertical-offset="10320">
               <folding />
             </state>
           </provider>
@@ -75,16 +70,7 @@
       <file leaf-file-name="display.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/display.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="23" selection-start="3633" selection-end="3633" vertical-scroll-proportion="0.0" vertical-offset="1411" max-vertical-offset="2730">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test2.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="22" selection-start="481" selection-end="481" vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="540">
+            <state line="102" column="37" selection-start="3489" selection-end="3489" vertical-scroll-proportion="0.0" vertical-offset="1296" max-vertical-offset="2715">
               <folding />
             </state>
           </provider>
@@ -109,13 +95,14 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/source_dest_list.py" />
+        <option value="$PROJECT_DIR$/display.py" />
+        <option value="$PROJECT_DIR$/test2.py" />
         <option value="$PROJECT_DIR$/cell.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/display.py" />
-        <option value="$PROJECT_DIR$/globals.py" />
-        <option value="$PROJECT_DIR$/test2.py" />
-        <option value="$PROJECT_DIR$/ai.py" />
+        <option value="$PROJECT_DIR$/ai_test.py" />
         <option value="$PROJECT_DIR$/board.py" />
+        <option value="$PROJECT_DIR$/globals.py" />
+        <option value="$PROJECT_DIR$/ai.py" />
       </list>
     </option>
   </component>
@@ -139,7 +126,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator proportions="" version="1" splitterProportion="0.5">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -150,7 +137,29 @@
       <autoscrollFromSource />
       <sortByType />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Crayon_Rails" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Crayon_Rails" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Crayon_Rails" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
@@ -158,13 +167,18 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="SearchEverywhereHistory" value="" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/test2.py" />
+    <property name="SearchEverywhereHistory" value="'Mangalor" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/test.py" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings />
     </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.ai">
     <configuration default="false" name="board" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -394,8 +408,8 @@
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.ai" />
-        <item index="1" class="java.lang.String" itemvalue="Python.test2" />
-        <item index="2" class="java.lang.String" itemvalue="Python.test" />
+        <item index="1" class="java.lang.String" itemvalue="Python.test" />
+        <item index="2" class="java.lang.String" itemvalue="Python.test2" />
         <item index="3" class="java.lang.String" itemvalue="Python.board" />
         <item index="4" class="java.lang.String" itemvalue="Python.source_dest_list" />
       </list>
@@ -449,17 +463,17 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="64" y="-4" width="1303" height="773" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.37461302" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37461302" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32972136" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24960877" sideWeight="0.4969819" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960877" sideWeight="0.4969819" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2543036" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3993808" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42260063" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960877" sideWeight="0.5030181" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32817337" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25386998" sideWeight="0.49921754" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25386998" sideWeight="0.5007825" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25386998" sideWeight="0.49921754" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -508,14 +522,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="python-line">
-          <url>file://$PROJECT_DIR$/ai.py</url>
-          <line>140</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="16" />
+      <option name="time" value="18" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -532,7 +539,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="135" column="47" selection-start="5389" selection-end="5389" vertical-scroll-proportion="0.0" vertical-offset="1641" max-vertical-offset="3345">
           <folding>
-            <element signature="e#0#91#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -576,14 +583,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="30" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="960" />
+        <state line="58" column="30" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="960">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/board.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="0" selection-start="92" selection-end="92" vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="3075">
           <folding>
-            <element signature="e#0#91#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -627,14 +636,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="30" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="960" />
+        <state line="58" column="30" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="960">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/board.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3000">
           <folding>
-            <element signature="e#0#91#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -672,7 +683,9 @@
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="217" column="15" selection-start="7660" selection-end="7664" vertical-scroll-proportion="0.33333334" vertical-offset="2142" max-vertical-offset="22185" />
+        <state line="217" column="15" selection-start="7660" selection-end="7664" vertical-scroll-proportion="0.33333334" vertical-offset="2142" max-vertical-offset="22185">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-1247972723/__builtin__.py">
@@ -687,53 +700,64 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="36" selection-start="1149" selection-end="1149" vertical-scroll-proportion="0.26124197" vertical-offset="493" max-vertical-offset="960" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/display.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="23" selection-start="3633" selection-end="3633" vertical-scroll-proportion="0.0" vertical-offset="1411" max-vertical-offset="2730">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/globals.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="23" selection-start="1770" selection-end="1770" vertical-scroll-proportion="0.0" vertical-offset="931" max-vertical-offset="10065">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="22" selection-start="481" selection-end="481" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="452">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cell.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="31" selection-start="565" selection-end="565" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="450">
+        <state line="13" column="30" selection-start="501" selection-end="501" vertical-scroll-proportion="0.26239067" vertical-offset="90" max-vertical-offset="450">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ai.py">
+    <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="132" column="0" selection-start="4357" selection-end="4357" vertical-scroll-proportion="5.885714" vertical-offset="2186" max-vertical-offset="3390">
+        <state line="11" column="0" selection-start="202" selection-end="409" vertical-scroll-proportion="0.2877698" vertical-offset="45" max-vertical-offset="855">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ai_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="14" selection-start="503" selection-end="503" vertical-scroll-proportion="0.69690263" vertical-offset="0" max-vertical-offset="3210">
           <folding>
-            <element signature="e#0#43#0" expanded="true" />
+            <element signature="e#0#43#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/display.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="102" column="37" selection-start="3489" selection-end="3489" vertical-scroll-proportion="0.0" vertical-offset="1296" max-vertical-offset="2715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/globals.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="674" column="27" selection-start="21586" selection-end="21586" vertical-scroll-proportion="0.0" vertical-offset="9868" max-vertical-offset="10320">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/board.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="202" column="60" selection-start="7640" selection-end="7640" vertical-scroll-proportion="0.83102494" vertical-offset="2730" max-vertical-offset="3480">
+        <state line="121" column="55" selection-start="4819" selection-end="4819" vertical-scroll-proportion="0.0" vertical-offset="1611" max-vertical-offset="3855">
           <folding>
-            <element signature="e#0#91#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ai.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="172" column="0" selection-start="6576" selection-end="6576" vertical-scroll-proportion="0.5973451" vertical-offset="2310" max-vertical-offset="2985">
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -1,11 +1,11 @@
 from itertools import permutations, ifilter
 from globals import *
-import pygame as pg, operator as op, numpy as np, math as m, time, random as r, copy, pickle
+import math as m, time, copy, pickle
 import board as b
-import display as d
+#import display as d
 # Returns true if any of the conditions are broken
 
-pg.init()
+#pg.init()
 
 start_time = time.time()
 
@@ -34,8 +34,8 @@ for coord, rsc_list in resources.iteritems():
 
 ##### IMPORTANT: Make sure payout keys are the same as demand keys, or it will not calculate final costs correctly
 
-all_starts = [inv_names["Calcutta"], inv_names['Bombay'], inv_names['Madras'], inv_names['Delhi'], inv_names['Karachi']]
-#all_starts = [inv_names["Calcutta"]]
+#all_starts = [inv_names["Calcutta"], inv_names['Bombay'], inv_names['Madras'], inv_names['Delhi'], inv_names['Karachi']]
+all_starts = [inv_names["Calcutta"]]
 
 demand_card1 = [("Pune", "Millet", 21),
                 ("Mangalore", "Goats", 36), # Best combo
@@ -170,7 +170,7 @@ ai_payout = {}
 cash_on_hand = 50
 loan_to_repay = 0
 #all_demands = [(('Mangalore', 'Goats', 36), ('Colombo', 'Textiles', 28), ('Ahmadabad', 'Coal', 17))]
-#all_demands = [(("Delhi", "Machinery", 20),("Calcutta", "Textiles", 13), ("Jamshedpur", "Millet", 20))]
+all_demands = [(("Delhi", "Machinery", 20),("Calcutta", "Textiles", 13), ("Jamshedpur", "Millet", 20))]
 for demand_combo in all_demands:
     print demand_combo
     sources_list, all_perms, demands, payouts = find_perms(demand_combo)
@@ -182,8 +182,8 @@ for demand_combo in all_demands:
                 delivery, total_cost_all, total_moves = perm_cost(b1, demands, payouts, possible_start, perm, cash_on_hand, loan_to_repay)
                 ai_payout[(demand_combo, source, possible_start, perm)] = inc_func(delivery)/(total_moves/12.)
 
-with open('ai_payout_test.pickle', 'wb') as handle:
-   pickle.dump(ai_payout, handle)
+# with open('ai_payout_test.pickle', 'wb') as handle:
+#    pickle.dump(ai_payout, handle)
 
 print "total time", time.time()-start_time
 

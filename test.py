@@ -1,59 +1,51 @@
-import board, time, copy
+import time, random, operator as op
 
-f = open('game_board.txt', 'r')
-terr_matrix = [line.replace('\n', '').split(' ') for line in f]
+def conv_to_cube(coord):
+    col = coord[1]
+    row = coord[0]
+    x = col - (row - (row % 2)) / 2
+    z = row
+    y = -x-z
+    return (x,y,z)
 
-start = (9,2)
+def dist3(src,dest):
+    row1 = src[0]
+    col1 = src[1]
+    x1 = col1 - (row1 - row1 % 2)/2
+    row2 = dest[0]
+    col2 = dest[1]
+    x2 = col2 - (row2 - row2 % 2)/2
+    return (abs(x1-x2)+abs(x1+row1+x2+row2)+abs(row1-row2))/2
 
-hex_names = {start: "START",
-             (3, 2): "Abbot",
-             (9, 6): "Baker",
-             (5, 28): "Camino",
-             (1, 8): "Dawson",
-             (4, 16): "Emmen",
-             (1, 23): "Flint" }
+def dist1(src,dest):
+    x1 = src[1] - (src[0] - src[0] % 2)/2
+    z1 = src[0]
+    x2 = dest[1] - (dest[0] - dest[0] % 2)/2
+    z2 = dest[0]
+    return (abs(x1-x2)+abs(x1+z1+x2+z2)+abs(z1-z2))/2
 
-b1 = board.Board({},{},terr_matrix)
-
-class test(object):
-    def __init__(self, test1_dict = {}, test2_dict = {}):
-        self.test1_dict = test1_dict
-        self.test2_dict = test2_dict
-    # def __getattr__(self, key):
-    #     return self[key]
-
-    # def __deepcopy__(self,memo):
-    #     cls = self.__class__
-    #     memo[id(self)] = result
-    #     for k, v in self.__dict__.items():
-    #         setattr(result, k, deepcopy(v,mem))
-    #     return result
-
-a = test()
-b = board.Board()
-
-for i in range(len(terr_matrix)):
-    for j in range(len(terr_matrix[0])):
-        a.test1_dict[(i,j,'ne')] = 0
-        a.test1_dict[(i,j,'e')] = 0
-        a.test1_dict[(i,j,'se')] = 0
-        a.test1_dict[(i,j,'sw')] = 0
-        a.test1_dict[(i,j,'w')] = 0
-        a.test1_dict[(i,j,'nw')] = 0
-
-for i in range(len(terr_matrix)):
-    for j in range(len(terr_matrix[0])):
-        a.test2_dict[(i,j)] = terr_matrix[i][j]
+def dist2(src,dest):
+    src_cube = conv_to_cube(src)
+    dest_cube = conv_to_cube(dest)
+    return sum(map(abs,map(op.sub, src_cube, dest_cube)))/2
 
 test_time1 = time.time()
 for i in range(1000):
-    #b = copy.deepcopy(a)
-    b.test1_dict = copy.copy(a.test1_dict)
-    b.test2_dict = copy.copy(a.test2_dict)
+    for j in range(1000):
+        dist1((0,0),(i,j))
+
 print time.time() - test_time1
 
 test_time2 = time.time()
 for i in range(1000):
-    b = board.Board(copy.copy(b1.terrain), copy.copy(b1.tracks))
+    for j in range(1000):
+        dist2((0,0),(i,j))
 
 print time.time() - test_time2
+
+test_time3 = time.time()
+for i in range(1000):
+    for j in range(1000):
+        dist3((0,0),(i,j))
+
+print time.time() - test_time3

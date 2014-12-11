@@ -36,9 +36,11 @@ even_tracks = { (-1,-1): 'nw',
 				#(0, 0): self
 				(1,  0): 'se',
 				#(-1,1): NOT ADJACENT
-				(0,  1): 'e'
+				(0,  1): 'e',
 				#(1,1): NOT ADJACENT
-					}
+                (0, 4): 'ferry',
+                (0,-4): 'ferry'
+                }
 # List of tuples adjacent to an even node
 even_list = list(even_tracks.keys())
 
@@ -664,3 +666,18 @@ rivers = {( 0, 17,  'e') : 1, # START Indus
 rivers_at = set([(i,j) for (i,j,k) in rivers])
 
 compass_dirs = ['e', 'ne', 'se', 'w', 'nw', 'sw']
+
+inv_names = {name: coord for coord, name in hex_names.items()}
+
+resources = {}
+
+for name, rsc_list in resources_by_name.iteritems():
+    coord = inv_names[name]
+    resources[coord] = rsc_list
+
+
+inv_resources = {}
+for coord, rsc_list in resources.iteritems():
+    for rsc in rsc_list:
+        inv_resources[rsc] = inv_resources.get(rsc, [])
+        inv_resources[rsc].append(coord)
