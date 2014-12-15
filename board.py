@@ -139,6 +139,7 @@ class Board(object):
             else:
                 self.tracks[b+(odd_tracks[b_dist],)] = player_num
         self.cost_dict[(a,b)] = 0
+        self.cost_dict[(b,a)] = 0
 
     # def get(self, i, j):
     #     return self.terrain[(i,j)]
@@ -198,7 +199,7 @@ class Board(object):
     def heuristic(self,goal,current,next,player_num):
         dist = self.hex_distance(next,goal)
         if self.cost_dict[(current,next)] == 0:
-            heur_cost = dist*.5
+            heur_cost = dist*.2
         else:
             heur_cost = dist
         return heur_cost
@@ -239,8 +240,8 @@ class Board(object):
         moves = move_cost[goal]
         build_cost = cost_so_far[goal]
         # Writes the path to the board
-        pathtest = self.reconstruct_path(came_from, start, goal)
-        self.create_path(pathtest, 1)
+        path = self.reconstruct_path(came_from, start, goal)
+        self.create_path(path, 1)
         return build_cost, moves
 
     def reconstruct_path(self, came_from, start, goal):
@@ -249,4 +250,4 @@ class Board(object):
         while current != start:
             current = came_from[current]
             path.append(current)
-        return path
+        return path[::-1]

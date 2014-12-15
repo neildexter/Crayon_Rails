@@ -40,20 +40,19 @@ for d1 in demand_card1:
         for d3 in demand_card3:
             all_demands[(d1, d2, d3)] = (d1, d2, d3)
 
-
 def good(x, s1, s2, s3, d1, d2, d3):
     for source1 in s1:
-        if source1 in x and not source1 in [d1, d2, d3]:
+        if source1 in x:
             # index returns the earliest instance in the list, so repeats (source AND dest) are okay
-            if x.index(source1) > x.index(d1):
+            if not any(x.index(source1) < idx for idx in [i for i, coord in enumerate(x) if coord == d1]):
                 return False
     for source2 in s2:
-        if source2 in x and not source2 in [d1, d2, d3]:
-            if x.index(source2) > x.index(d2):
+        if source2 in x:
+            if not any(x.index(source2) < idx for idx in [i for i, coord in enumerate(x) if coord == d2]):
                 return False
     for source3 in s3:
-        if source3 in x and not source3 in [d1, d2, d3]:
-            if x.index(source3) > x.index(d3):
+        if source3 in x:
+            if not any(x.index(source3) < idx for idx in [i for i, coord in enumerate(x) if coord == d3]):
                 return False
     return True
 
@@ -153,8 +152,12 @@ b1 = b.Board({},{},{},{},terr_matrix)
 iter = 0.
 #total_perms = float(len(all_perms))
 ai_payout = {}
+costs_dict = {}
+moves_dict = {}
+deliveries_dict = {}
 cash_on_hand = 50
 loan_to_repay = 0
+i = 0
 #all_demands = [(('Mangalore', 'Goats', 36), ('Colombo', 'Textiles', 28), ('Ahmadabad', 'Coal', 17))]
 #all_demands = [(("Delhi", "Machinery", 20),("Calcutta", "Textiles", 13), ("Jamshedpur", "Millet", 20))]
 #all_demands = [(('Mangalore', 'Goats', 36), ('Mangalore', 'Oil', 45), ('Rawalpindi', 'Mica', 18))]
@@ -169,16 +172,25 @@ for demand_combo in all_demands:
             for perm in all_perms[source_combo]:
                 delivery, total_cost_all, total_moves = perm_cost(b1, source_combo, payouts, possible_start, perm, cash_on_hand, loan_to_repay)
                 ai_payout[(demand_combo, source_combo, possible_start, perm)] = inc_func(delivery)/(total_moves/12.)
-                print delivery, total_cost_all, total_moves, inc_func(delivery)/(total_moves/12.)
+                deliveries_dict[(demand_combo, source_combo, possible_start, perm)] = delivery
+                costs_dict[(demand_combo, source_combo, possible_start, perm)] = total_cost_all
+                moves_dict[(demand_combo, source_combo, possible_start, perm)] = total_moves
+                #print delivery, total_cost_all, total_moves, inc_func(delivery)/(total_moves/12.)
+        i += 1
+        print i/1680.
 
-
-#demand_combo
-#   source_combo (some bad sources; eliminate immediately)
-#       start_combo (find best start, test a few
-#           perms (these can be tested randomly with very little difference in overall cost
-
-with open('ai_payout_test.pickle', 'wb') as handle:
+with open('ai.pickle', 'wb') as handle:
    pickle.dump(ai_payout, handle)
+
+with open('total_deliveries.pickle', 'wb') as handle:
+   pickle.dump(deliveries_dict, handle)
+
+with open('total_costs.pickle', 'wb') as handle:
+   pickle.dump(costs_dict, handle)
+
+with open('total_moves.pickle', 'wb') as handle:
+   pickle.dump(moves_dict, handle)
+
 
 print "total time", time.time()-start_time
 

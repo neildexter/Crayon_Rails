@@ -2,17 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6e79654e-a3a7-4eac-b9b6-f3dddd526fe9" name="Default" comment="Fixed path finding; permutes cities and serially finds the best routes to connect each to existing track">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ai_test.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Bayesian Bandit.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/beta_bandit.py" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map.JPG" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map.Rivers.JPG" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map_BW_Threshold.JPG" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/Map_modified.JPG" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/dijkstra.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ai.py" afterPath="$PROJECT_DIR$/ai.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ai_test.py" afterPath="$PROJECT_DIR$/ai_test.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/board.py" afterPath="$PROJECT_DIR$/board.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/globals.py" afterPath="$PROJECT_DIR$/globals.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test.py" afterPath="$PROJECT_DIR$/test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test2.py" afterPath="$PROJECT_DIR$/test2.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Crayon_Rails.iws" />
@@ -36,10 +35,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ai.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ai.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ai.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="172" column="0" selection-start="6576" selection-end="6576" vertical-scroll-proportion="0.5973451" vertical-offset="2310" max-vertical-offset="2985">
+            <state line="180" column="0" selection-start="7040" selection-end="7040" vertical-scroll-proportion="0.0" vertical-offset="2291" max-vertical-offset="3165">
+              <folding>
+                <element signature="e#0#43#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ai_test.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ai_test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="328" column="0" selection-start="13173" selection-end="13173" vertical-scroll-proportion="0.76082003" vertical-offset="4586" max-vertical-offset="5205">
               <folding>
                 <element signature="e#0#43#0" expanded="true" />
               </folding>
@@ -50,7 +60,7 @@
       <file leaf-file-name="board.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/board.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="121" column="55" selection-start="4819" selection-end="4819" vertical-scroll-proportion="0.0" vertical-offset="1611" max-vertical-offset="3855">
+            <state line="155" column="19" selection-start="6184" selection-end="6184" vertical-scroll-proportion="0.0" vertical-offset="2151" max-vertical-offset="3870">
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -61,7 +71,7 @@
       <file leaf-file-name="globals.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/globals.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="674" column="27" selection-start="21586" selection-end="21586" vertical-scroll-proportion="0.0" vertical-offset="9868" max-vertical-offset="10320">
+            <state line="682" column="40" selection-start="21807" selection-end="21807" vertical-scroll-proportion="0.0" vertical-offset="9868" max-vertical-offset="10320">
               <folding />
             </state>
           </provider>
@@ -70,7 +80,7 @@
       <file leaf-file-name="display.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/display.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="102" column="37" selection-start="3489" selection-end="3489" vertical-scroll-proportion="0.0" vertical-offset="1296" max-vertical-offset="2715">
+            <state line="176" column="58" selection-start="6109" selection-end="6109" vertical-scroll-proportion="0.0" vertical-offset="2263" max-vertical-offset="2715">
               <folding />
             </state>
           </provider>
@@ -99,10 +109,12 @@
         <option value="$PROJECT_DIR$/test2.py" />
         <option value="$PROJECT_DIR$/cell.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/ai_test.py" />
-        <option value="$PROJECT_DIR$/board.py" />
+        <option value="$PROJECT_DIR$/Bayesian Bandit.py" />
         <option value="$PROJECT_DIR$/globals.py" />
+        <option value="$PROJECT_DIR$/beta_bandit.py" />
         <option value="$PROJECT_DIR$/ai.py" />
+        <option value="$PROJECT_DIR$/board.py" />
+        <option value="$PROJECT_DIR$/ai_test.py" />
       </list>
     </option>
   </component>
@@ -167,8 +179,8 @@
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
-    <property name="SearchEverywhereHistory" value="'Mangalor" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/test.py" />
+    <property name="SearchEverywhereHistory" value="&#10;'Mangalor" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ai_test.py" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -180,7 +192,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ai">
+  <component name="RunManager" selected="Python.ai_test">
     <configuration default="false" name="board" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -198,24 +210,6 @@
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PyDebugRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="source_dest_list" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="Crayon_Rails" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/source_dest_list.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -270,6 +264,26 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="Crayon_Rails" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test2.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PyDebugRunner" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PyDebugRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="ai_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Crayon_Rails" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ai_test.py" />
       <option name="PARAMETERS" value="" />
       <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
@@ -400,18 +414,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.board" />
-      <item index="1" class="java.lang.String" itemvalue="Python.source_dest_list" />
-      <item index="2" class="java.lang.String" itemvalue="Python.ai" />
-      <item index="3" class="java.lang.String" itemvalue="Python.test" />
-      <item index="4" class="java.lang.String" itemvalue="Python.test2" />
+      <item index="1" class="java.lang.String" itemvalue="Python.ai" />
+      <item index="2" class="java.lang.String" itemvalue="Python.test" />
+      <item index="3" class="java.lang.String" itemvalue="Python.test2" />
+      <item index="4" class="java.lang.String" itemvalue="Python.ai_test" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.ai" />
-        <item index="1" class="java.lang.String" itemvalue="Python.test" />
-        <item index="2" class="java.lang.String" itemvalue="Python.test2" />
-        <item index="3" class="java.lang.String" itemvalue="Python.board" />
-        <item index="4" class="java.lang.String" itemvalue="Python.source_dest_list" />
+        <item index="0" class="java.lang.String" itemvalue="Python.ai_test" />
+        <item index="1" class="java.lang.String" itemvalue="Python.ai" />
+        <item index="2" class="java.lang.String" itemvalue="Python.test" />
+        <item index="3" class="java.lang.String" itemvalue="Python.test2" />
+        <item index="4" class="java.lang.String" itemvalue="Python.board" />
       </list>
     </recent_temporary>
   </component>
@@ -472,8 +486,8 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2543036" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.42260063" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960877" sideWeight="0.5030181" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25386998" sideWeight="0.5007825" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25386998" sideWeight="0.49921754" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25386998" sideWeight="0.4827856" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25386998" sideWeight="0.5172144" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -522,7 +536,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="18" />
+      <option name="time" value="20" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -688,13 +702,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-1247972723/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="817" column="10" selection-start="26939" selection-end="26939" vertical-scroll-proportion="0.38197425" vertical-offset="12077" max-vertical-offset="76860">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/india_rails_gameboard.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374" />
@@ -721,41 +728,66 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ai_test.py">
+    <entry file="file://$PROJECT_DIR$/Bayesian Bandit.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="14" selection-start="503" selection-end="503" vertical-scroll-proportion="0.69690263" vertical-offset="0" max-vertical-offset="3210">
+        <state line="17" column="24" selection-start="577" selection-end="577" vertical-scroll-proportion="0.5641593" vertical-offset="0" max-vertical-offset="465">
           <folding>
-            <element signature="e#0#43#0" expanded="false" />
+            <element signature="e#0#19#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/beta_bandit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="46" selection-start="46" selection-end="46" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="465">
+          <folding>
+            <element signature="e#93#111#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/display.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="37" selection-start="3489" selection-end="3489" vertical-scroll-proportion="0.0" vertical-offset="1296" max-vertical-offset="2715">
+        <state line="176" column="58" selection-start="6109" selection-end="6109" vertical-scroll-proportion="0.0" vertical-offset="2263" max-vertical-offset="2715">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/globals.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="674" column="27" selection-start="21586" selection-end="21586" vertical-scroll-proportion="0.0" vertical-offset="9868" max-vertical-offset="10320">
+        <state line="682" column="40" selection-start="21807" selection-end="21807" vertical-scroll-proportion="0.0" vertical-offset="9868" max-vertical-offset="10320">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/board.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="121" column="55" selection-start="4819" selection-end="4819" vertical-scroll-proportion="0.0" vertical-offset="1611" max-vertical-offset="3855">
+        <state line="155" column="19" selection-start="6184" selection-end="6184" vertical-scroll-proportion="0.0" vertical-offset="2151" max-vertical-offset="3870">
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-1247972723/__builtin__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="0" selection-start="1090" selection-end="1090" vertical-scroll-proportion="0.3318584" vertical-offset="255" max-vertical-offset="76860">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ai.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="172" column="0" selection-start="6576" selection-end="6576" vertical-scroll-proportion="0.5973451" vertical-offset="2310" max-vertical-offset="2985">
+        <state line="180" column="0" selection-start="7040" selection-end="7040" vertical-scroll-proportion="0.0" vertical-offset="2291" max-vertical-offset="3165">
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ai_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="328" column="0" selection-start="13173" selection-end="13173" vertical-scroll-proportion="0.76082003" vertical-offset="4586" max-vertical-offset="5205">
           <folding>
             <element signature="e#0#43#0" expanded="true" />
           </folding>

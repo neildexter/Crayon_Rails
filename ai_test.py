@@ -1,79 +1,29 @@
 from itertools import permutations, ifilter
 from globals import *
-import math as m, time, copy, pickle
+import pygame as pg, operator as op, numpy as np, math as m, time, random as rand, copy, pickle
 import board as b
-#import display as d
-# Returns true if any of the conditions are broken
-
-#pg.init()
-
-start_time = time.time()
-
-f = open('india_rails_gameboard.txt', 'r')
-
-terr_matrix = [line.replace('\n', '').split(' ') for line in f]
-
-f.close()
-
-pkl_file = open('cost_dict.pk1', 'rb')
-cost_dict = pickle.load(pkl_file)
-
-inv_names = {name: coord for coord, name in hex_names.items()}
-resources = {}
-
-for name, rsc_list in resources_by_name.iteritems():
-    coord = inv_names[name]
-    resources[coord] = rsc_list
-
-
-inv_resources = {}
-for coord, rsc_list in resources.iteritems():
-    for rsc in rsc_list:
-        inv_resources[rsc] = inv_resources.get(rsc, [])
-        inv_resources[rsc].append(coord)
-
-##### IMPORTANT: Make sure payout keys are the same as demand keys, or it will not calculate final costs correctly
-
-#all_starts = [inv_names["Calcutta"], inv_names['Bombay'], inv_names['Madras'], inv_names['Delhi'], inv_names['Karachi']]
-all_starts = [inv_names["Calcutta"]]
-
-demand_card1 = [("Pune", "Millet", 21),
-                ("Mangalore", "Goats", 36), # Best combo
-                ("Anuradhapura", "Imports", 10)]
-
-demand_card2 = [("Rawalpindi", "Mica", 18), # Best combo
-                ("Quetta", "Copper", 40),
-                ("Colombo", "Textiles", 28)]
-
-demand_card3 = [("Ahmadabad", "Coal", 17),
-                ("Darjeeling", "Cotton", 33),
-                ("Mangalore", "Oil", 45)] # Best combo
-
-all_demands = {}
-for d1 in demand_card1:
-    for d2 in demand_card2:
-        for d3 in demand_card3:
-            all_demands[(d1, d2, d3)] = (d1, d2, d3)
-
+import bisect
+import collections
+import display as d
+from beta_bandit import *
 
 def good(x, s1, s2, s3, d1, d2, d3):
     for source1 in s1:
-        if source1 in x and not source1 in [d1, d2, d3]:
+        if source1 in x:
             # index returns the earliest instance in the list, so repeats (source AND dest) are okay
-            if x.index(source1) > x.index(d1):
+            # If multiple instances of sources and destinations exist, there is never an efficient permutation with S1 D1 S1 D1
+            # Therefore, the below code is sufficient to encode the condition
+            if not any(x.index(source1) < idx for idx in [i for i, coord in enumerate(x) if coord == d1]):
                 return False
     for source2 in s2:
-        if source2 in x and not source2 in [d1, d2, d3]:
-            if x.index(source2) > x.index(d2):
+        if source2 in x:
+            if not any(x.index(source2) < idx for idx in [i for i, coord in enumerate(x) if coord == d2]):
                 return False
     for source3 in s3:
-        if source3 in x and not source3 in [d1, d2, d3]:
-            if x.index(source3) > x.index(d3):
+        if source3 in x:
+            if not any(x.index(source3) < idx for idx in [i for i, coord in enumerate(x) if coord == d3]):
                 return False
     return True
-
-# Rate at which future turns are discounted (this will need tweaking
-dsc_factor = float(1)
 
 def inc_func(x):
     if x<1:
@@ -84,19 +34,19 @@ def inc_func(x):
 
 def find_perms(demand_combo):
     demands = [(inv_names[dem[0]], dem[1]) for dem in demand_combo]
-    payouts = { inv_names[dem[0]] : dem[2] for dem in demand_combo}
+
+    # for name, rsc, payout in demand_combo:
+    #     coord = inv_names[name]
+    #     payouts[coord] = payouts.get(coord, [])
+    #     payouts[coord].append(payout)
 
     d1 = demands[0][0]
     d2 = demands[1][0]
     d3 = demands[2][0]
 
-    print d1, d2, d3
-
     s1 = inv_resources[demands[0][1]]
     s2 = inv_resources[demands[1][1]]
     s3 = inv_resources[demands[2][1]]
-
-    print s1, s2, s3
 
     sources_list = []
     all_perms = {}
@@ -108,9 +58,9 @@ def find_perms(demand_combo):
                 perm_list = []
                 perm_list[:] = list(ifilter(lambda x: good(x, s1, s2, s3, d1, d2, d3), perms))
                 all_perms[(source1, source2, source3)] = perm_list
-    return sources_list, all_perms, demands, payouts
+    return sources_list, all_perms, demands
 
-def perm_cost(board, demands, payouts, start, perm, cash_on_hand, loan_to_repay):
+def perm_cost(board, source_combo, payouts, start, perm, cash, loan):
     perm = (start,)+perm
 
     test_board = b.Board(copy.copy(board.terrain), copy.copy(board.tracks), copy.copy(board.cost_dict), board.adj_list)
@@ -121,6 +71,9 @@ def perm_cost(board, demands, payouts, start, perm, cash_on_hand, loan_to_repay)
     total_moves = 0
     total_cost_all = 0.
     total_cost_delivery = 0
+
+    dsc_factor = float(.95)
+
     for i in range(len(perm)-1):
         build_cost, moves = test_board.ai_a_star(perm[i], perm[i+1], 1)
 
@@ -128,82 +81,262 @@ def perm_cost(board, demands, payouts, start, perm, cash_on_hand, loan_to_repay)
         total_build_cost += build_cost
         total_cost_delivery += build_cost
 
-        if cash_on_hand < build_cost:
-            total_cost_delivery += m.fabs(cash_on_hand-build_cost)
-            loan_to_repay += 2*m.fabs(cash_on_hand-build_cost)
-            cash_on_hand = 0
+        if cash < build_cost:
+            total_cost_delivery += m.fabs(cash-build_cost)
+            loan += 2*m.fabs(cash-build_cost)
+            cash = 0
         else:
-            cash_on_hand -= build_cost
+            cash -= build_cost
 
-        if perm[i+1] in payouts_remaining and \
-            any(visited in inv_resources[[dem for dem in demands if dem[0] == perm[i+1]][0][1]] for visited in perm[0:i+1]): # means a source has been visited
-            delivery_num = 3 - len(payouts_remaining)
-            # Pop forces dictionary to remove payments that have been issues
-            payout = payouts_remaining.pop(perm[i+1])
-            # Accumulates payouts made minus the cost to make the delivery, discounted by deliveries made so far
-            delivery += (payout-total_cost_delivery)*dsc_factor**delivery_num
-            if loan_to_repay > 0:
-                if loan_to_repay > payout:
-                    loan_to_repay -= payout
-                    # cash_on_hand still 0
+        for src in source_combo:
+            if src in perm[0:i+1] and (perm[i+1], src) in payouts_remaining: #and \
+                delivery_num = 3 - len(payouts_remaining)
+                # Pop forces dictionary to remove payments that have been issues
+                payout = payouts_remaining.pop((perm[i+1], src))
+                # Accumulates payouts made minus the cost to make the delivery, discounted by deliveries made so far
+                delivery += (payout-total_cost_delivery)*dsc_factor**delivery_num
+                if loan > 0:
+                    if loan > payout:
+                        loan -= payout
+                        # cash still 0
+                    else:
+                        cash = payout - loan
+                        loan = 0
                 else:
-                    cash_on_hand = payout - loan_to_repay
-                    loan_to_repay = 0
-            else:
-                cash_on_hand += payout
-            # Reset build cost for discount calculation
-            total_cost_all += total_cost_delivery
-            total_cost_delivery = 0
+                    cash += payout
+                # Reset build cost for discount calculation
+                total_cost_all += total_cost_delivery
+                total_cost_delivery = 0
     # Need to use an increasing function that is approximately f(x) = x for large numbers, exp(x) for negative
     return delivery, total_cost_all, total_moves
-    #print perm, ai_payout_sources
-    # Deletes the notional board b2 so the name can be reused for testing each other possible permutations
-    #print perm, ai_payout[perm], total_moves, total_build_cost, total_cost_all
 
-#### NOTE: Move, THEN build. Need to factor this into the model
-#### If first turn, plan two builds
+def plan(current_board, current_loc, all_demands, cash, loan, first_turn = True):
+    all_starts = [inv_names["Calcutta"], inv_names['Bombay'], inv_names['Madras'], inv_names['Delhi'], inv_names['Karachi']]
 
-b1 = b.Board({},{},{},{},terr_matrix)
-iter = 0.
-#total_perms = float(len(all_perms))
-ai_payout = {}
+    if first_turn == True:
+        possible_starts = all_starts
+    else:
+        possible_starts = [current_loc]
+
+    ai_payout = {}
+    costs_dict = {}
+    moves_dict = {}
+    deliveries_dict = {}
+    perms_dict = {}
+    payouts = {}
+
+    for demand_combo in all_demands:
+        sources_list, all_perms, demands = find_perms(demand_combo)
+        for source_combo in sources_list:
+            payouts[(demand_combo, source_combo)] = {(inv_names[dem[0]], src) : dem[2] for dem in demand_combo for src in source_combo if dem[1] in resources[src]}
+            #print [hex_names[source] for source in source_combo]
+            for start in possible_starts:
+                perms_dict[(demand_combo, source_combo, start)] = all_perms[source_combo]
+
+    N = 2700
+    bb = BetaBandit(perms_dict.keys())
+
+    for i in range(N):
+        # Get a recommendation via Bayesian Bandits
+        choice = bb.get_recommendation()
+
+        #Convert the choice into a demand, sources, and start
+        demand_combo = choice[0]
+        source_combo = choice[1]
+        chosen_start = choice[2]
+
+        # Remove the permutation being tested (so it is not calculated twice)
+        perms_list = perms_dict[choice]
+        new_ai_payout = 0
+        delivery = -100
+
+        if len(perms_list) > 0:
+            perm = perms_list.pop()
+
+            delivery, total_cost_all, total_moves = perm_cost(current_board, source_combo, payouts[(demand_combo, source_combo)], chosen_start, perm, cash, loan)
+            new_ai_payout = inc_func(delivery)/(total_moves/12.)
+
+            ai_payout[choice+(perm,)] = new_ai_payout
+            deliveries_dict[choice+(perm,)] = delivery
+            costs_dict[choice+(perm,)] = total_cost_all
+            moves_dict[choice+(perm,)] = total_moves
+
+            bb.set_results(choice, delivery)
+        print i, new_ai_payout, delivery, choice
+    best_perm = max(ai_payout.iteritems(), key = op.itemgetter(1))[0]
+    print ai_payout[best_perm], best_perm
+    return best_perm
+
+def first_turn(current_board, all_demands, cash, loan):
+    current_plan = plan(current_board, [], all_demands, cash, loan, True)
+
+    starting_loc = current_plan[2]
+    build_plan = list((starting_loc,) + current_plan[3])
+    source_plan = current_plan[1]
+    move_plan = copy.copy(build_plan)
+    demand_plan = current_plan[0]
+
+    #Build first 40 million (okay, other players might get in the way, but for now let's ignore that)
+
+    #next_dest = build_plan[0] #Set the first place to go to as the first item to build to
+    build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
+    cash, loan= update_cash(cash, loan, build_cost, 0)
+
+    #==========
+    # Other people's first turns would go here...
+    #==========
+
+    build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
+    cash, loan = update_cash(cash, loan, build_cost, 0)
+
+    return move_plan, build_plan, demand_plan, source_plan, cash, loan
+
+def update_cash(cash, loan, cost, payout):
+    if cost != 0:
+        if cash > cost:
+            cash -= cost
+        else:
+            cash = 0
+            loan += 2*m.fabs(cost)
+    if payout != 0:
+        if loan > payout:
+            loan -= payout
+
+        elif cash == 0:
+            cash = payout - loan
+            loan = 0
+        else:
+            cash += payout
+    if loan > 40:
+        print "ERROR! Cannot borrow more than 20M rupees"
+    return cash, loan
+
+def make_build(current_board, player_num, build_plan, spending_limit = 20):
+    build_cost = 0
+    done = False
+    built_to = build_plan[0]
+    while (not len(build_plan) == 0) and (not done):
+        if len(build_plan) == 1:
+            came_from, cost_so_far, move_cost = current_board.a_star(built_to, build_plan[0], player_num)
+        else:
+            came_from, cost_so_far, move_cost = current_board.a_star(build_plan[0], build_plan[1], player_num)
+        path = current_board.reconstruct_path(came_from, build_plan[0], build_plan[1])
+        for i in range(len(path) - 1):
+            next_move_cost = current_board.cost_dict[path[i], path[i+1]]
+            if build_cost+next_move_cost < spending_limit and not done:
+                built_to = path[i+1]
+                current_board.create_rail(path[i], path[i+1],player_num)
+                build_cost += next_move_cost
+            else:
+                done = True
+        if not done:
+            build_plan.pop(0)
+    build_plan = [built_to,] + build_plan
+    return build_cost, build_plan
+
+def make_move(current_board, cash, loan, player_num, move_plan, inventory, demand_plan, source_plan, move_limit = 12):
+    print move_plan
+    moves_taken = 0
+    done = False
+    locations_demanding = {inv_names[dem[0]] : dem[1] for dem in demand_plan}
+    items_demanded = [dem[1] for dem in demand_plan]
+    payouts = [(inv_names[dem[0]], dem[2]) for dem in demand_plan]
+    current_loc = move_plan[0]
+    while (not len(move_plan) == 0) and (not done):
+        came_from, cost_so_far, move_cost = current_board.a_star(move_plan[0], move_plan[1], player_num)
+        path = current_board.reconstruct_path(came_from, move_plan[0], move_plan[1])
+        if cost_so_far[move_plan[1]] > 0:
+            print "ERROR! Attempt to move along unbuilt rail"
+        for i in range(len(path) - 1):
+            if moves_taken + 1 < move_limit and not done:
+                current_loc = path[i+1]
+                print current_loc
+                moves_taken += 1
+                if current_loc in source_plan: #Add all items necessary to fulfill objective (algorithm lists the location twice, so this should only happen once per location?
+                    for rsc in resources[current_loc]:
+                        num_needed = items_demanded.count(rsc)
+                        if num_needed > 0:
+                            for i in range(num_needed):
+                                print rsc, "has been added to inventory"
+                                inventory.append(rsc) #add item to inventory
+                            if len(inventory) > 3:
+                                print "ERROR! Inventory too large"
+                for rsc in locations_demanding.values():
+                    if current_loc in locations_demanding.keys() and locations_demanding[current_loc] in inventory: #and an item demanded is in inventory (check all demands in case more than one is demanded here
+                        payout = [pyt[1] for pyt in payouts if pyt[0] == current_loc and locations_demanding[current_loc] == rsc]
+                        cash, loan = update_cash(cash, loan, 0, payout[0])
+                        inventory.pop(rsc)
+                        print rsc, "has been delivered to ", current_loc, "and has been removed from inventory"
+            else:
+                done = True
+        if not done:
+            move_plan.pop(0)
+    move_plan.pop(0)
+    move_plan = [current_loc,]+move_plan
+    remaining_moves = move_limit - moves_taken
+    print moves_taken
+    return remaining_moves, inventory, move_plan, cash, loan
+
+pg.init()
+
+demand_card1 = [("Pune", "Millet", 21),
+                ("Mangalore", "Goats", 36),
+                ("Anuradhapura", "Imports", 10)]
+
+demand_card2 = [("Rawalpindi", "Mica", 18),
+                ("Quetta", "Copper", 40),
+                ("Colombo", "Textiles", 28)]
+
+demand_card3 = [("Ahmadabad", "Coal", 17),
+                ("Darjeeling", "Cotton", 33),
+                ("Mangalore", "Oil", 45)]
+
+all_demands = {}
+for d1 in demand_card1:
+    for d2 in demand_card2:
+        for d3 in demand_card3:
+            all_demands[(d1, d2, d3)] = (d1, d2, d3)
+
+f = open('india_rails_gameboard.txt', 'r')
+terr_matrix = [line.replace('\n', '').split(' ') for line in f]
+f.close()
+pkl_file = open('cost_dict.pk1', 'rb')
+cost_dict = pickle.load(pkl_file)
+
+current_board = b.Board({},{},{},{},terr_matrix)
 cash_on_hand = 50
 loan_to_repay = 0
-#all_demands = [(('Mangalore', 'Goats', 36), ('Colombo', 'Textiles', 28), ('Ahmadabad', 'Coal', 17))]
-all_demands = [(("Delhi", "Machinery", 20),("Calcutta", "Textiles", 13), ("Jamshedpur", "Millet", 20))]
-for demand_combo in all_demands:
-    print demand_combo
-    sources_list, all_perms, demands, payouts = find_perms(demand_combo)
-    for source in sources_list:
-        print source
-        for possible_start in all_starts:
-            print possible_start
-            for perm in all_perms[source]:
-                delivery, total_cost_all, total_moves = perm_cost(b1, demands, payouts, possible_start, perm, cash_on_hand, loan_to_repay)
-                ai_payout[(demand_combo, source, possible_start, perm)] = inc_func(delivery)/(total_moves/12.)
 
-# with open('ai_payout_test.pickle', 'wb') as handle:
-#    pickle.dump(ai_payout, handle)
+ai_num = 1
+
+start_time = time.time()
+
+move_plan, build_plan, demand_plan, source_plan, cash_on_hand, loan_to_repay = first_turn(current_board, all_demands, cash_on_hand, loan_to_repay)
+
+print "Total money after first two builds: ", cash_on_hand
+
+inventory = []
+
+remaining_moves, inventory, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
+
+build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
+cash_on_hand, loan_to_repay = update_cash(cash_on_hand, loan_to_repay, build_cost, 0)
+
+remaining_moves, inventory, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
+
+#build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
+#cash_on_hand, loan_to_repay= update_cash(cash_on_hand, loan_to_repay, build_cost, 0)
+
+remaining_moves, inventory, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
+
+
+
+print "Current position after move 1: ", move_plan
+
+# Still need to do next build phase
+
+d.display(current_board)
 
 print "total time", time.time()-start_time
-
-# best_perm = {}
-# for possible_start in start:
-#     for sources in sources_list:
-#         best_perm[sources] = max(ai_payout[possible_start][sources], key = ai_payout[possible_start][sources].get)
-
-# total_build_cost = 0
-# payouts_remaining = copy.copy(payouts)
-# cash_on_hand = 40
-# total_moves = 0
-
-#best_perm = ((9, 2), (1, 8), (4, 16), (5, 28), (5, 28), (9, 6), (1, 23))
-# for possible_start in start:
-#     for sources in sources_list:
-#         print "\n", best_perm[sources], ai_payout[possible_start][sources][best_perm[sources]]
-
-# for i in range(len(best_perm)-1):
-#     build_cost, moves = b1.ai_a_star(best_perm[i],best_perm[i+1],1)
-
 
 input("Press Enter")
