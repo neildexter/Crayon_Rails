@@ -182,7 +182,7 @@ def first_turn(current_board, all_demands, cash, loan):
 
     #next_dest = build_plan[0] #Set the first place to go to as the first item to build to
     build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
-    cash, loan= update_cash(cash, loan, build_cost, 0)
+    cash, loan = update_cash(cash, loan, build_cost, 0)
 
     #==========
     # Other people's first turns would go here...
@@ -210,7 +210,8 @@ def update_cash(cash, loan, cost, payout):
         else:
             cash += payout
     if loan > 40:
-        print "ERROR! Cannot borrow more than 20M rupees"
+        print "#####ERROR! Cannot borrow more than 20M rupees"
+        print cash, loan
     return cash, loan
 
 def make_build(current_board, player_num, build_plan, spending_limit = 20):
@@ -224,10 +225,13 @@ def make_build(current_board, player_num, build_plan, spending_limit = 20):
             path = current_board.reconstruct_path(came_from, built_to, build_plan[0])
             for i in range(len(path) - 1):
                 next_move_cost = current_board.cost_dict[path[i], path[i+1]]
-                if build_cost+next_move_cost < spending_limit and not done:
+                if build_cost + next_move_cost < spending_limit and not done:
                     built_to = path[i+1]
+                    if current_board.tracks.get((path[i], path[i+1]), 0) != player_num:
+                        print "Rail built:", path[i], path[i+1], next_move_cost, hex_names.get(path[i+1], "")
+                    else:
+                        print "(No build)", path[i], path[i+1], hex_names.get(path[i+1], "")
                     current_board.create_rail(path[i], path[i+1],player_num)
-                    print "Rail built:", path[i], path[i+1], hex_names.get(path[i+1], "")
                     build_cost += next_move_cost
                 else:
                     done = True
@@ -235,7 +239,8 @@ def make_build(current_board, player_num, build_plan, spending_limit = 20):
                 build_plan.pop(0)
         build_plan = [built_to,] + build_plan
     else:
-        print "ERROR! No locations to build to in build_plan"
+        print "#####ERROR! No locations to build to in build_plan"
+    print "Money unspent:", spending_limit - build_cost
     return build_cost, build_plan
 
 def make_move(current_board, cash, loan, player_num, move_plan, inventory, demand_plan, source_plan, move_limit = 12):
@@ -251,40 +256,45 @@ def make_move(current_board, cash, loan, player_num, move_plan, inventory, deman
             came_from, cost_so_far, move_cost = current_board.a_star(current_loc, move_plan[0], player_num)
             path = current_board.reconstruct_path(came_from, current_loc, move_plan[0])
             if cost_so_far[move_plan[0]] > 0:
-                print "ERROR! Attempt to move along unbuilt rail"
+                print "WARNING! Current path contains unbuilt rail. Cost to go:", cost_so_far[move_plan[0]], "Cash:", cash
             for i in range(len(path) - 1):
                 if moves_taken + 1 <= move_limit and not done:
-                    current_loc = path[i+1]
-                    print current_loc, hex_names.get(current_loc, "")
-                    moves_taken += 1
-                    if current_loc in source_plan: #Add all items necessary to fulfill objective (algorithm lists the location twice, so this should only happen once per location?
-                        for rsc in resources[current_loc]:
-                            num_needed = items_demanded.count(rsc)
-                            if num_needed > 0:
-                                for i in range(num_needed):
-                                    print rsc, "has been added to inventory"
-                                    inventory.append(rsc) #add item to inventory
-                                if len(inventory) > 3:
-                                    print "ERROR! Inventory too large"
-                    for rsc in locations_demanding.values():
-                        rsc_needed = locations_demanding.get(current_loc,None)
-                        if rsc_needed is not None and rsc_needed == rsc and rsc_needed in inventory: #and an item demanded is in inventory (check all demands in case more than one is demanded here
-                            #print current_loc, locations_demanding, rsc, payouts
-                            payout = [pyt[1] for pyt in payouts if pyt[0] == current_loc and locations_demanding[current_loc] == rsc]
-                            #print payout
-                            cash, loan = update_cash(cash, loan, 0, payout[0])
-                            inventory.pop(inventory.index(rsc))
-                            print rsc, "has been delivered to ", current_loc, "and has been removed from inventory"
+                    if current_board.cost_dict[(path[i],path[i+1])] == 0:
+                        current_loc = path[i+1]
+                        print current_loc, hex_names.get(current_loc, "")
+                        moves_taken += 1
+                        if current_loc in source_plan: #Add all items necessary to fulfill objective (algorithm lists the location twice, so this should only happen once per location?
+                            for rsc in resources[current_loc]:
+                                num_needed = items_demanded.count(rsc)
+                                if num_needed > 0:
+                                    for i in range(num_needed):
+                                        print rsc, "has been added to inventory"
+                                        inventory.append(rsc) #add item to inventory
+                                    if len(inventory) > 3:
+                                        print "#####ERROR! Inventory too large"
+                        for rsc in locations_demanding.values():
+                            rsc_needed = locations_demanding.get(current_loc,None)
+                            if rsc_needed is not None and rsc_needed == rsc and rsc_needed in inventory: #and an item demanded is in inventory (check all demands in case more than one is demanded here
+                                payout = [pyt[1] for pyt in payouts if pyt[0] == current_loc and locations_demanding[current_loc] == rsc]
+                                cash, loan = update_cash(cash, loan, 0, payout[0])
+                                inventory.pop(inventory.index(rsc))
+                                print rsc, "has been delivered to", hex_names[current_loc], "for", payout[0]
+                                print "Cash:", cash, "Loan:", loan
+                    else:
+                        done = True
+                        print "#####ERROR! Cannot move along unbuilt rail"
                 else:
                     done = True
             if not done:
                 move_plan.pop(0)
         move_plan = [current_loc,]+move_plan
     else:
-        print "ERROR! No moves in current move plan"
+        print "#####ERROR! No moves in current move plan"
     remaining_moves = move_limit - moves_taken
-    print moves_taken
-    return remaining_moves, inventory, move_plan, cash, loan
+    return remaining_moves, inventory, demand_plan, move_plan, cash, loan
+
+
+# MAIN FUNCTIONS
 
 pg.init()
 
@@ -309,8 +319,8 @@ for d1 in demand_card1:
 f = open('india_rails_gameboard.txt', 'r')
 terr_matrix = [line.replace('\n', '').split(' ') for line in f]
 f.close()
-pkl_file = open('cost_dict.pk1', 'rb')
-cost_dict = pickle.load(pkl_file)
+# pkl_file = open('cost_dict.pk1', 'rb')
+# cost_dict = pickle.load(pkl_file)
 
 current_board = b.Board({},{},{},{},terr_matrix)
 cash_on_hand = 50
@@ -322,29 +332,21 @@ start_time = time.time()
 
 move_plan, build_plan, demand_plan, source_plan, cash_on_hand, loan_to_repay = first_turn(current_board, all_demands, cash_on_hand, loan_to_repay)
 
-print "Total money after first two builds: ", cash_on_hand
+print "Cash after first two builds: ", cash_on_hand
 
 inventory = []
 
-remaining_moves, inventory, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
+for i in range(10):
+    remaining_moves, inventory, demand_plan, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
 
-build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
-cash_on_hand, loan_to_repay = update_cash(cash_on_hand, loan_to_repay, build_cost, 0)
+    print "Demands remaining:", demand_plan
+    build_cost, build_plan = make_build(current_board, 1, build_plan, cash_on_hand)
+    cash_on_hand, loan_to_repay = update_cash(cash_on_hand, loan_to_repay, build_cost, 0)
 
-remaining_moves, inventory, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
+    print "Build/Move", i
+    print "Cash:", cash_on_hand, "Loan:", loan_to_repay
 
-#build_cost, build_plan = make_build(current_board, 1, build_plan, 20)
-#cash_on_hand, loan_to_repay= update_cash(cash_on_hand, loan_to_repay, build_cost, 0)
-
-remaining_moves, inventory, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, 12)
-
-
-
-print "Current position after move 1: ", move_plan
-
-# Still need to do next build phase
-
-d.display(current_board)
+#d.display(current_board)
 
 print "total time", time.time()-start_time
 

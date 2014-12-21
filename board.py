@@ -29,37 +29,27 @@ class Board(object):
     # Returns the cost of going from location tuple a to tuple b
     def calc_cost(self, a, b, player_num):
         cost = inf # cost is infinite unless otherwise set
-        rvr = 0
+        a_terr = self.terrain[a]
+        b_terr = self.terrain[b]
         if self.adj(a, b) == True and self.valid(b):   # This is necessary if a, b are not known to be adjacent
-            a_dist = tuple(map(op.sub, b, a))
             # Determines if the track to the destination is occupied by another player
-            if a[0] % 2 == 0:
-                occupied_by = self.tracks.get(a+(even_tracks[a_dist],),0)
-                rvr += rivers.get(a+(even_tracks[a_dist],),0)
-            else:
-                occupied_by = self.tracks.get(a+(odd_tracks[a_dist],),0)
-                rvr += rivers.get(a+(odd_tracks[a_dist],),0)
-            if rvr == 0:
-                b_dist = tuple(map(op.sub, a, b))
-                if b[0] % 2 == 0:
-                    rvr += rivers.get(b+(even_tracks[b_dist],),0)
-                else:
-                    rvr += rivers.get(b+(odd_tracks[b_dist],),0)
+            occupied_by = self.tracks.get((a,b),0)
+            rvr = rivers.get((a,b), False)
+
             if occupied_by == 0:
-                a_terr = self.terrain[a]
-                b_terr = self.terrain[b]
-                if a_terr == 'L' and b_terr == 'L':
-                    cost = 0
-                elif a_terr == 'f' and b_terr == 'f':
+                if a_terr == 'f' and b_terr == 'f':
                     cost = 0
                 else:
                     cost = terr_cost[b_terr]
-                    if rvr > 0:
+                    if rvr:
                         cost += 2
             elif occupied_by == player_num:
                 cost = 0 # "free" to rebuild over owned track
             else:
                 cost = inf # can't build over other player's tracks
+        # Overrides any other conditions (i.e., multiple players can share, no river cost, no need to build, etc.
+        if a_terr == 'L' and b_terr == 'L':
+            cost = 0
         return cost
 
      # Takes in tuples and returns True if adjacent (False if identity or not adjacent)
@@ -122,20 +112,9 @@ class Board(object):
     def create_rail(self, a, b, player_num):  # Creates a rail between the two nodes
         if not self.adj(a, b):
             print "Cannot create rail. Points %r and %r are not adjacent." % (a, b)
-        else:
-            a_dist = tuple(map(op.sub, b, a))
-            b_dist = tuple(map(op.sub, a, b))
-
-            if a[0] % 2 == 0:
-                self.tracks[a+(even_tracks[a_dist],)] = player_num
-            else:
-                self.tracks[a+(odd_tracks[a_dist],)] = player_num
-
-            # If b is in an odd row, interpret the distance accordingly
-            if b[0] % 2 == 0:
-                self.tracks[b+(even_tracks[b_dist],)] = player_num
-            else:
-                self.tracks[b+(odd_tracks[b_dist],)] = player_num
+        elif not( self.terrain[b] == 'L' and self.terrain[a] == 'L'):
+            self.tracks[(a,b)] = player_num
+            self.tracks[(b,a)] = player_num
         self.cost_dict[(a,b)] = 0
         self.cost_dict[(b,a)] = 0
 

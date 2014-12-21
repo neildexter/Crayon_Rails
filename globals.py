@@ -1,4 +1,4 @@
-import math as m
+import math as m, operator as op
 h_float = 58.6 # size (height) of the square bounding box for each hex image
 h = int(h_float)
 hex_gap_float = h_float*(2-m.sqrt(3))/4
@@ -41,6 +41,7 @@ even_tracks = { (-1,-1): 'nw',
                 (0, 4): 'ferry',
                 (0,-4): 'ferry'
                 }
+inv_even_tracks = {direction : coord for coord, direction in even_tracks.items()}
 # List of tuples adjacent to an even node
 even_list = list(even_tracks.keys())
 
@@ -55,6 +56,8 @@ odd_tracks = { #(-1,-1) NOT ADJACENT
 				(0,  1): 'e',
 				(1,  1): 'se'
 					}
+inv_odd_tracks = {direction : coord for coord, direction in odd_tracks.items()}
+
 # List of tuples adjacent to an odd node
 odd_list = list(odd_tracks.keys())
 
@@ -191,7 +194,7 @@ hex_names = { (16, 27): 'Agra',
               (39, 31): 'Vijayawada',
               (36, 36): 'Visakhapatnam'}
 
-rivers = {( 0, 17,  'e') : 1, # START Indus
+rivers_compass = {( 0, 17,  'e') : 1, # START Indus
           ( 0, 17, 'se') : 1,
           ( 1, 16,  'e') : 1,
           ( 1, 16, 'se') : 1,
@@ -663,7 +666,20 @@ rivers = {( 0, 17,  'e') : 1, # START Indus
           (50, 29, 'se') : 1,
           (50, 30, 'sw') : 1 # END Kaveri
         }
-rivers_at = set([(i,j) for (i,j,k) in rivers])
+
+rivers = {}
+for rvr_loc in rivers_compass.keys():
+    a = (rvr_loc[0],)+(rvr_loc[1],)
+    if a[0] % 2 == 0:
+        a_dist = inv_even_tracks[rvr_loc[2]]
+
+    else:
+        a_dist = inv_odd_tracks[rvr_loc[2]]
+    b = tuple(map(op.add, a_dist, a))
+
+    # Add river in both directions
+    rivers[(a,b)] = True
+    rivers[(b,a)] = True
 
 compass_dirs = ['e', 'ne', 'se', 'w', 'nw', 'sw']
 
