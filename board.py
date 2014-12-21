@@ -34,11 +34,9 @@ class Board(object):
             a_dist = tuple(map(op.sub, b, a))
             # Determines if the track to the destination is occupied by another player
             if a[0] % 2 == 0:
-                #occupied_by = self.board[a[0],a[1]].tracks[even_tracks[a_dist]]
                 occupied_by = self.tracks.get(a+(even_tracks[a_dist],),0)
                 rvr += rivers.get(a+(even_tracks[a_dist],),0)
             else:
-                #occupied_by = self.board[a[0],a[1]].tracks[odd_tracks[a_dist]]
                 occupied_by = self.tracks.get(a+(odd_tracks[a_dist],),0)
                 rvr += rivers.get(a+(odd_tracks[a_dist],),0)
             if rvr == 0:
@@ -140,9 +138,6 @@ class Board(object):
                 self.tracks[b+(odd_tracks[b_dist],)] = player_num
         self.cost_dict[(a,b)] = 0
         self.cost_dict[(b,a)] = 0
-
-    # def get(self, i, j):
-    #     return self.terrain[(i,j)]
 
     def set_terrain(self,terr_matrix):
         self.height = len(terr_matrix)
