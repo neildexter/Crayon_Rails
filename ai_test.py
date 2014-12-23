@@ -32,13 +32,23 @@ def inc_func(x):
         y = x
     return y
 
-def find_perms(demand_combo):
+def find_perms(demand_combo, inventory):
     demands = [(inv_names[dem[0]], dem[1]) for dem in demand_combo]
 
-    # for name, rsc, payout in demand_combo:
-    #     coord = inv_names[name]
-    #     payouts[coord] = payouts.get(coord, [])
-    #     payouts[coord].append(payout)
+    items_demanded = [dem[1] for dem in demand_combo]
+
+    # 1. Check resources needed to fulfill (examine inventory)
+    # 2. If not enough of the rsc in inventory to fulfill demands, add a source for it
+    # 3. Create every permutation of demands [d1, d2, d3] + [s1, s2, s3] (only including sources that are necessary)
+    # 4. If not any source index < demand index for a resource OR the resource is in inventory
+    #    What about more than one needed, but one in inventory?
+    #       It could be better to deliver the item first and then go to the source to get another, or to go back first and get another
+    #       However, the value of this is determined by step count, not by lack of payout or something (since that will not make a difference)
+    #       PROBLEM: code for "planning" portion won't calculate correct payout if no source is visited, but the item is in inventory
+    #       Revamp to re-use code from "make_move" and "make_build"? (i.e., "real" simulation)
+
+    #for item in items_demanded
+    #    if item
 
     d1 = demands[0][0]
     d2 = demands[1][0]
@@ -110,7 +120,7 @@ def perm_cost(board, source_combo, payouts, start, perm, cash, loan):
     # Need to use an increasing function that is approximately f(x) = x for large numbers, exp(x) for negative
     return delivery, total_cost_all, total_moves
 
-def plan(current_board, current_loc, all_demands, cash, loan, first_turn = True):
+def plan(current_board, current_loc, all_demands, cash, loan, inventory, first_turn = True):
     all_starts = [inv_names["Calcutta"], inv_names['Bombay'], inv_names['Madras'], inv_names['Delhi'], inv_names['Karachi']]
 
     if first_turn == True:
@@ -126,7 +136,7 @@ def plan(current_board, current_loc, all_demands, cash, loan, first_turn = True)
     payouts = {}
 
     for demand_combo in all_demands:
-        sources_list, all_perms, demands = find_perms(demand_combo)
+        sources_list, all_perms, demands = find_perms(demand_combo, inventory)
         for source_combo in sources_list:
             payouts[(demand_combo, source_combo)] = {(inv_names[dem[0]], src) : dem[2] for dem in demand_combo for src in source_combo if dem[1] in resources[src]}
             for start in possible_starts:
@@ -168,7 +178,7 @@ def plan(current_board, current_loc, all_demands, cash, loan, first_turn = True)
     return best_perm
 
 def first_turn(current_board, all_demands, cash, loan):
-    #current_plan = plan(current_board, [], all_demands, cash, loan, True)
+    #current_plan = plan(current_board, [], all_demands, cash, loan, [], True)
 
     current_plan = ((('Mangalore', 'Goats', 36), ('Rawalpindi', 'Mica', 18), ('Mangalore', 'Oil', 45)), ((6, 20), (18, 18), (1, 17)), (13, 25), ((18, 18), (6, 20), (1, 17), (1, 17), (47, 21), (47, 21)))
 
@@ -248,7 +258,7 @@ def make_build(current_board, player_num, build_plan, spending_limit = 20):
 def make_move(current_board, cash, loan, player_num, move_plan, inventory, demand_plan, source_plan, move_limit = 12):
     print "Current move plan", move_plan
     moves_taken = 0
-    demand_fulfilled = ()
+    demands_fulfilled = []
     if len(move_plan) > 1:
         done = False
         demand_at_loc = {}
@@ -288,7 +298,7 @@ def make_move(current_board, cash, loan, player_num, move_plan, inventory, deman
                                 print rsc, "has been delivered to", hex_names[current_loc], "for", payout[0]
                                 print "Cash:", cash, "Loan:", loan
 
-                                demand_fulfilled = (hex_names[current_loc], rsc, payout[0])
+                                demands_fulfilled.append((hex_names[current_loc], rsc, payout[0]))
 
                                 done = True
                     else:
@@ -302,7 +312,7 @@ def make_move(current_board, cash, loan, player_num, move_plan, inventory, deman
     else:
         print "#####ERROR! No moves in current move plan"
     remaining_moves = move_limit - moves_taken
-    return remaining_moves, inventory, demand_fulfilled, move_plan, cash, loan
+    return remaining_moves, inventory, demands_fulfilled, move_plan, cash, loan
 
 
 # MAIN FUNCTIONS
@@ -311,6 +321,7 @@ pg.init()
 
 demand_cards = [[("Pune", "Millet", 21),
                 ("Mangalore", "Goats", 36),
+
                 ("Anuradhapura", "Imports", 10)],
 
                [("Rawalpindi", "Mica", 18),
@@ -321,7 +332,29 @@ demand_cards = [[("Pune", "Millet", 21),
                 ("Darjeeling", "Cotton", 33),
                 ("Mangalore", "Oil", 45)] ]
 
-new_demands = [[
+new_demands = [[("Delhi", "Goats", 7),
+                ("Patna", "Rubber", 42),
+                ("Cochin", "Machinery", 25)],
+
+               [("Bombay", "Indigo", 30),
+                ("Jamshedpur", "Tea", 11),
+                ("Jaipur", "Peanuts", 18)],
+
+               [("Bombay", "Wood", 17),
+                ("Asansol", "Cotton", 23),
+                ("English Bazaar", "Coffee", 38)],
+
+               [("Dhaka", "Bauxite", 13),
+                ("Varanasi", "Peanuts", 21),
+                ("Darjeeling", "Coffee", 45)],
+
+               [("Dhaka", "Salt", 36),
+                ("Vijayawada", "Bauxite", 10),
+                ("Kathmandu", "Mica", 28)],
+
+               [("Madras", "Copper", 25),
+                ("Tiruchchirappalli", "Sugar", 16),
+                ("Darjeeling", "Salt", 37)]]
 
 all_demands = {}
 for d1 in demand_cards[0]:
@@ -341,28 +374,34 @@ ai_num = 1
 
 start_time = time.time()
 
+inventory = []
+
 move_plan, build_plan, demand_plan, source_plan, cash_on_hand, loan_to_repay = first_turn(current_board, all_demands, cash_on_hand, loan_to_repay)
 
 print "Cash after first two builds: ", cash_on_hand
-
-inventory = []
 
 for i in range(10):
     remaining_moves = 12
     done = False
     iter = 0
-    while remaining_moves > 0 and not done:
-        remaining_moves, inventory, demand_fulfilled, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, remaining_moves)
 
-        if demand_fulfilled != ():
-            print "Demand fulfilled:", demand_fulfilled
-            for dem_card in demand_cards:
-                if demand_fulfilled in dem_card:
-                    demand_cards.pop(demand_cards.index(dem_card))
-                    demand_cards.append(new_demands.pop(0))
-        iter += 1
-        if iter > 1:
-            done = True
+    remaining_moves, inventory, demands_fulfilled, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, remaining_moves)
+
+    # if demands_fulfilled is not None:
+    #     for dem in demands_fulfilled:
+    #         print "Demand fulfilled:", demands_fulfilled
+    #         for dem_card in demand_cards:
+    #             if dem in dem_card:
+    #                 demand_cards.pop(demand_cards.index(dem_card))
+    #                 demand_cards.append(new_demands.pop(0))
+    #     current_plan = plan(current_board, move_plan[0], all_demands, cash_on_hand, loan_to_repay, inventory, False)
+    #     # Take next move based on new current plan
+    #     build_plan = list((current_plan[2],) + current_plan[3])
+    #     source_plan = current_plan[1]
+    #     move_plan = copy.copy(build_plan)
+    #     demand_plan = current_plan[0]
+    #
+    #     remaining_moves, inventory, demands_fulfilled, move_plan, cash_on_hand, loan = make_move(current_board, cash_on_hand, loan_to_repay, ai_num, move_plan, inventory, demand_plan, source_plan, remaining_moves)
 
     build_cost, build_plan = make_build(current_board, ai_num, build_plan, cash_on_hand)
     cash_on_hand, loan_to_repay = update_cash(cash_on_hand, loan_to_repay, build_cost, 0)
@@ -370,7 +409,7 @@ for i in range(10):
     print "Build/Move", i
     print "Cash:", cash_on_hand, "Loan:", loan_to_repay
 
-#d.display(current_board)
+d.display(current_board)
 
 print "total time", time.time()-start_time
 
